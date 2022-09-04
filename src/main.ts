@@ -56,9 +56,7 @@ async function main() {
     }
 
     // Set up a scaling setting
-    // TBD: Need to get rules from taskParams. For now, it's a default payload
-    // rules = taskParams.scalingRules
-    const scaleRules = [{ name: "httpscalingrule", custom: { type: "http", metadata: { concurrentRequests: "50" }}}]
+    let scaleRules = taskParams.scaleRules
 
     const scaleConfig = {
       maxReplicas: taskParams.scaleMaxReplicas, 

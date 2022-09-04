@@ -25,6 +25,7 @@ export class TaskParameters {
     // Optional scale parameters
     private _scaleMaxReplicas: number;
     private _scaleMinReplicas: number;
+    private _scaleRules: any[];
 
     // Required container config parameters
     private _containersConfig: any[];
@@ -36,7 +37,7 @@ export class TaskParameters {
         this._resourceGroup = core.getInput('resource-group', { required: true });
         this._containerAppName = core.getInput('name', { required: true });
         this._location = core.getInput('location', { required: true });
-        this._managedEnvironmentName = core.getInput('managed-environment-name', { required: true })
+        this._managedEnvironmentName = core.getInput('managed-environment-name', { required: true });
 
         // Optional Dapr parameters
         this._daprAppPort = parseInt(core.getInput('dapr-app-port', { required: false }));
@@ -58,6 +59,9 @@ export class TaskParameters {
         // Optional scale parameters
         this._scaleMaxReplicas = parseInt(core.getInput('scale-max-replicas', { required: false }));
         this._scaleMinReplicas = parseInt(core.getInput('scale-min-replicas', { required: false }));
+        let scaleRulesJsonString = core.getInput('scale-rules-json', { required: false });
+        this._scaleRules = JSON.parse(scaleRulesJsonString);
+        // TBD: Need to validate that the specific params for scaleRules exist in the input json
 
         // Required container config parameters
         let containerConfigJsonString = core.getInput('containers-config-json', { required: true });
@@ -130,6 +134,10 @@ export class TaskParameters {
 
     public get scaleMinReplicas(){
         return this._scaleMinReplicas;
+    }
+
+    public get scaleRules(){
+        return this._scaleRules;
     }
 
     // Required container config parameters
