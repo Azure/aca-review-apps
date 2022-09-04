@@ -1,0 +1,56 @@
+name: 'Deploy to Azure Container App'
+description: 'Deploy Containers to Azure Container App. github.com/Azure/Actions'
+
+inputs:
+    resource-group:
+        description: 'Name of the Resource Group in which the Container App will be created'
+        required: true
+    location:
+        description: 'Location where the Container will be deployed'
+        required: true
+    name:
+        description: 'TBD: Name of the Container Group Instance - this should be aquired with cred automatically'
+        required: true
+    subscription-id:
+        description: 'Name of the Subscription ID'
+        required: true
+    managed-environment-name:
+        description: 'Name of the Managed Environment'
+        required: true
+    dapr-app-port:
+        description: 'Port of the Dapr App'
+        required: false
+    dapr-app-protocol:
+        description: 'Protocol of the Dapr App'
+        required: false
+    dapr-enabled:
+        description: 'Enable Dapr'
+        required: false
+    ingress-custom-domains:
+        description: 'Custom Domain for Ingress'
+        required: false
+    ingress-external:
+        description: 'External Ingress'
+        required: false
+    ingress-target-port:
+        description: 'Ingress Target Port'
+        required: false
+    ingress-traffic:
+        description: 'Ingress Traffic'
+        required: false
+    scale-max-replicas:
+        description: 'Max Replicas'
+        required: false
+    scale-min-replicas:
+        description: 'Min Replicas'
+        required: false
+
+outputs:
+    container-result:
+        description: 'Sample: Container Result'
+branding:
+    icon: 'container-app-logo.svg'
+    color: 'blue'
+runs:
+    using: 'node16'
+    main: 'lib/main.js'

@@ -1,0 +1,36 @@
+on: [push]
+name: Linux_Container_Workflow
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    # checkout the repo
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@master
+
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16.13.0'
+        registry-url: 'https://npm.pkg.github.com'
+    - run: npm install 
+    - run: npm install 
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: 'Deploy to Azure Container Apps'
+      uses: ./
+      with:
+        resource-group: sample-rg
+        name: yuhattor-test
+        location: 'East US'
+        subscription-id: 'a4deccb1-a1f6-40cb-a923-f55a7d22c32d'
+        managed-environment-name: 'my-container-env'
+        dapr-app-port: 3000
+        dapr-app-protocol: 'http'
+        dapr-enabled: true
+        ingress-custom-domains: ""
+        ingress-external: true
+        ingress-target-port: 3000
+        ingress-traffic: ""

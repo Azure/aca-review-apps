@@ -1,0 +1,32 @@
+{
+  "name": "aca-deploy-action",
+  "version": "0.0.1",
+  "description": "GitHub Action to Deploy to Azure Container Apps",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Azure/aca-deploy-action.git"
+  },
+  "engines": {
+    "node": "16.13.0",
+    "npm": "8.1.0"
+  },
+  "author": "Yuki Hattori",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Azure/aca-deploy/issues"
+  },
+  "homepage": "https://github.com/Azure/aca-deploy#readme",
+  "dependencies": {
+    "@actions/core": "^1.9.1",
+    "@azure/arm-appcontainers": "^1.1.0",
+    "@azure/identity": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^13.13.52",
+    "debug": "^4.3.4"
+  }
+}
