@@ -30,6 +30,7 @@ export class TaskParameters {
     // Required container config parameters
     private _containersConfig: any[];
 
+
     private constructor() {
 
         // Required basic parameters
@@ -39,35 +40,58 @@ export class TaskParameters {
         this._location = core.getInput('location', { required: true });
         this._managedEnvironmentName = core.getInput('managed-environment-name', { required: true });
 
+
         // Optional Dapr parameters
         this._daprAppPort = parseInt(core.getInput('dapr-app-port', { required: false }));
         this._daprAppProtocol = core.getInput('dapr-app-protocol', { required: false });
         this._daprEnabled = core.getInput('dapr-enabled', { required: false }) == "true";
+
 
         // Optional ingress parameters
         this._ingressExternal = core.getInput('ingress-external', { required: false }) == "true";
         this._ingressTargetPort = parseInt(core.getInput('ingress-target-port', { required: false }));
 
         let ingressCustomDomainsJsonString = core.getInput('ingress-custom-domains-json', { required: false });
-        this._ingressCustomDomains = JSON.parse(ingressCustomDomainsJsonString)
+        let ingressCustomDomains = JSON.parse(ingressCustomDomainsJsonString)
+        this.removeEmptyAttribute(ingressCustomDomains);
+        this._ingressCustomDomains = ingressCustomDomains;
         // TBD: Need to validate that the specific params for ingressDomains exist in the input json
 
         let ingressTrafficJsonString = core.getInput('ingress-traffic-json', { required: false});
-        this._ingressTraffic = JSON.parse(ingressTrafficJsonString)
+        let ingressTraffic = JSON.parse(ingressTrafficJsonString)
+        this.removeEmptyAttribute(ingressTraffic);
+        this._ingressTraffic = ingressTraffic;
         // TBD: Need to validate that the specific params for ingressTraffic exist in the input json
+
 
         // Optional scale parameters
         this._scaleMaxReplicas = parseInt(core.getInput('scale-max-replicas', { required: false }));
         this._scaleMinReplicas = parseInt(core.getInput('scale-min-replicas', { required: false }));
+
         let scaleRulesJsonString = core.getInput('scale-rules-json', { required: false });
-        this._scaleRules = JSON.parse(scaleRulesJsonString);
+        let scaleRules = JSON.parse(scaleRulesJsonString)
+        this.removeEmptyAttribute(scaleRules);
+        this._scaleRules = scaleRules;
         // TBD: Need to validate that the specific params for scaleRules exist in the input json
+
 
         // Required container config parameters
         let containerConfigJsonString = core.getInput('containers-config-json', { required: true });
-        this._containersConfig = JSON.parse(containerConfigJsonString)
+        let containerConfig = JSON.parse(containerConfigJsonString)
+        this.removeEmptyAttribute(containerConfig);
+        this._containersConfig = containerConfig;
         // TBD: Need to validate that the specific params for containersConfig like 'name' and 'image' exist in the input json
     }
+
+    private isNotEmpty(obj: any) {
+        return !(Object.keys(obj).length === 0);
+    }
+
+    private removeEmptyAttribute(obj: any) {
+        return Object.entries(obj)
+          .filter(([_, v]) => this.isNotEmpty(v))
+          .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
+      }
 
     public static getTaskParams() {
         if(!this.taskparams) {

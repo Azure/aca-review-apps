@@ -37,7 +37,6 @@ async function main() {
       // If any one of these is missing, leave it empty.
     };
 
-
     // Set up an ingress configuration
     // TBD: Determine what is required and what is optional for each condition and set them appropriately.
     //      For now, it's off if they don't have everything in place.
@@ -65,7 +64,7 @@ async function main() {
     }
 
     // TBD: Find a way to get a value instead of json
-    const containerConfig = taskParams.containersConfig
+    const containersConfig = taskParams.containersConfig
 
     const containerAppEnvelope: ContainerApp = {
       configuration: networkConfig,
@@ -73,7 +72,7 @@ async function main() {
       managedEnvironmentId:
         `/subscriptions/${subscriptionId}/resourceGroups/${taskParams.resourceGroup}/providers/Microsoft.App/managedEnvironments/${taskParams.managedEnvironmentName}`,
       template: {
-        containers: containerConfig,
+        containers: containersConfig,
         scale: scaleConfig
       }
     };
