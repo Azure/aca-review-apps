@@ -24,6 +24,7 @@ jobs:
           operations-per-run: 100
           exempt-issue-labels: 'backlog'
           
+      # Setting PR as idle if it has been open for 14 days with no activity.
       - uses: actions/stale@v3
         name: Setting PR as idle
         with:

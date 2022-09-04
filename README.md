@@ -14,44 +14,51 @@ This repository contains the [GitHub Action for Deploying to Azure Container App
 
 The definition of this GitHub Action is in [action.yml](./action.yml).
 
-# End-to-End Sample Workflows
+## End-to-End Sample Workflows
 
-## Dependencies on other GitHub Actions
+### Dependencies on other GitHub Actions
+
 * [Azure Login](https://github.com/Azure/login) Login with your Azure Credentials for Authentication. Once login is done, the next set of Azure Actions in the workflow can re-use the same session within the job.
 
-## Azure Service Principal for RBAC
+### Azure Service Principal for RBAC
+
 For using any credentials like Azure Service Principal in your workflow, add them as [secrets](https://help.github.com/en/articles/virtual-enivronments-for-github-actions#creating-and-using-secrets-encrypted-variables) in the GitHub Repository and then refer them in the workflow.
+
 1. Download Azure CLI from [here](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest), run `az login` to login with your Azure Credentials.
 2. Run Azure CLI command to create an [Azure Service Principal for RBAC](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview):
-```bash
 
-    az ad sp create-for-rbac --name "myApp" --role contributor \
-                             --scopes /subscriptions/{subscription-id}/resourceGroups/{resource-group} \
-                             --sdk-auth
-    
-    # Replace {subscription-id}, {resource-group} with the subscription, resource group details of the WebApp
-    # The command should output a JSON object similar to this:
-
-  {
-    "clientId": "<GUID>",
-    "clientSecret": "<GUID>",
-    "subscriptionId": "<GUID>",
-    "tenantId": "<GUID>",
-    (...)
-  }
-```
-  * You can further scope down the Azure Credentials to the Web App using scope attribute. For example, 
+  ```bash
+      az ad sp create-for-rbac --name "myApp" --role contributor \
+                               --scopes /subscriptions/{subscription-id}/resourceGroups/{resource-group} \
+                               --sdk-auth
+      
+      # Replace {subscription-id}, {resource-group} with the subscription, resource group details of the WebApp
+      # The command should output a JSON object similar to this:
+  
+    {
+      "clientId": "<GUID>",
+      "clientSecret": "<GUID>",
+      "subscriptionId": "<GUID>",
+      "tenantId": "<GUID>",
+      (...)
+    }
   ```
+
+  \* You can further scope down the Azure Credentials to the Web App using scope attribute. For example,
+
+  ```bash
    az ad sp create-for-rbac --name "myApp" --role contributor \
                             --scopes /subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/sites/{app-name} \
                             --sdk-auth
 
   # Replace {subscription-id}, {resource-group}, and {app-name} with the names of your subscription, resource group, and Azure Web App.
   ```
-3. Paste the json response from above Azure CLI to your GitHub Repository > Settings > Secrets > Add a new secret > **AZURE_CREDENTIALS**
-4. Now in the workflow file in your branch: `.github/workflows/workflow.yml` replace the secret in Azure login action with your secret (Refer to the example below)
 
-## Build and Deploy a Node.JS App to Azure Container App
+3. Paste the json response from above Azure CLI to your GitHub Repository > Settings > Secrets > Add a new secret > **AZURE_CREDENTIALS**
+
+1. Now in the workflow file in your branch: `.github/workflows/workflow.yml` replace the secret in Azure login action with your secret (Refer to the example below)
+
+### Build and Deploy a Node.JS App to Azure Container App
 
 ```yaml
 
@@ -62,9 +69,9 @@ SAMPLE WORKFLOW WILL BE HERE
 
 ```
 
-## Example YAML Snippets
+### Example YAML Snippets
 
-### Deploying a Container from a public registry
+#### Deploying a Container from a public registry
 
 ```yaml
 - name: 'Deploy to Azure Container Apps'
@@ -85,7 +92,8 @@ SAMPLE WORKFLOW WILL BE HERE
 
 ```
 
-### Samples Action 2 
+#### Samples Action 2
+
 ```yaml
 - name: 'Sample yaml pipeline'
 - uses: Azure/aca-deploy@v1
@@ -93,7 +101,8 @@ SAMPLE WORKFLOW WILL BE HERE
 
 ```
 
-### Samples Action 3
+#### Samples Action 3
+
 ```yaml
 - name: 'Sample yaml pipeline'
 - uses: Azure/aca-deploy@v1
@@ -101,7 +110,8 @@ SAMPLE WORKFLOW WILL BE HERE
 
 ```
 
-### Samples Action 4
+#### Samples Action 4
+
 ```yaml
 - name: 'Sample yaml pipeline'
 - uses: Azure/aca-deploy@v1
@@ -109,7 +119,7 @@ SAMPLE WORKFLOW WILL BE HERE
 
 ```
 
-# Contributing
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
