@@ -26,6 +26,9 @@ export class TaskParameters {
     private _scaleMaxReplicas: number;
     private _scaleMinReplicas: number;
 
+    // Required container config parameters
+    private _containersConfig: any[];
+
     private constructor() {
 
         // Required basic parameters
@@ -43,12 +46,23 @@ export class TaskParameters {
         // Optional ingress parameters
         this._ingressExternal = core.getInput('ingress-external', { required: false }) == "true";
         this._ingressTargetPort = parseInt(core.getInput('ingress-target-port', { required: false }));
-        this._ingressCustomDomains = core.getInput('ingress-custom-domains', { required: false }).split(',');
-        this._ingressTraffic = core.getInput('ingress-traffic', { required: false }).split(',');
+
+        let ingressCustomDomainsJsonString = core.getInput('ingress-custom-domains-json', { required: false });
+        this._ingressCustomDomains = JSON.parse(ingressCustomDomainsJsonString)
+        // TBD: Need to validate that the specific params for ingressDomains exist in the input json
+
+        let ingressTrafficJsonString = core.getInput('ingress-traffic-json', { required: false});
+        this._ingressTraffic = JSON.parse(ingressTrafficJsonString)
+        // TBD: Need to validate that the specific params for ingressTraffic exist in the input json
 
         // Optional scale parameters
         this._scaleMaxReplicas = parseInt(core.getInput('scale-max-replicas', { required: false }));
         this._scaleMinReplicas = parseInt(core.getInput('scale-min-replicas', { required: false }));
+
+        // Required container config parameters
+        let containerConfigJsonString = core.getInput('containers-config-json', { required: true });
+        this._containersConfig = JSON.parse(containerConfigJsonString)
+        // TBD: Need to validate that the specific params for containersConfig like 'name' and 'image' exist in the input json
     }
 
     public static getTaskParams() {
@@ -116,5 +130,10 @@ export class TaskParameters {
 
     public get scaleMinReplicas(){
         return this._scaleMinReplicas;
+    }
+
+    // Required container config parameters
+    public get containersConfig() {
+        return this._containersConfig;
     }
 }

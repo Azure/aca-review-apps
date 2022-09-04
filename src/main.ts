@@ -31,8 +31,6 @@ async function main() {
     // Set up a Dapr configuration
     // TBD: Determine what is required and what is optional for each condition and set them appropriately.
     //      For now, it''s off if they don't have everything in place.
-    // Sample: 
-    //      customDomains: [{name: "www.my-name.com", bindingType: "SniEnabled", certificateId: "/subscriptions/a4deccb1-a1f6-40cb-a923-f55a7d22c32d/resourceGroups/rg/providers/Microsoft.App/managedEnvironments/demokube/certificates/my-certificate-for-my-name-dot-com", }, ],
     const daprConfig = (taskParams.daprEnabled && taskParams.daprAppPort && taskParams.daprAppProtocol) ? {
       appPort: taskParams.daprAppPort, appProtocol: taskParams.daprAppProtocol, enabled: taskParams.daprEnabled
     } : {
@@ -42,11 +40,7 @@ async function main() {
 
     // Set up an ingress configuration
     // TBD: Determine what is required and what is optional for each condition and set them appropriately.
-    //      For now, it''s off if they don't have everything in place.
-    // Sample: 
-    //      traffic: [ { label: "production", revisionName: "testcontainerApp0-ab1234", weight: 100 } ]
-    // TBD: Need to decide how to represent the associative array
-    //      For now, it's a default payload
+    //      For now, it's off if they don't have everything in place.
     const ingresConfig = (taskParams.ingressExternal && taskParams.ingressTargetPort && taskParams.ingressTraffic && taskParams.ingressCustomDomains) ? {
       external: taskParams.ingressExternal, 
       targetPort: taskParams.ingressTargetPort, 
@@ -56,21 +50,10 @@ async function main() {
       // If any one of these is missing, leave it empty.
     }
 
-    // Set up a container probes
-    // TBD: Determine what is required and what is optional for each condition and set them appropriately.
-    //      For now, it's a default payload
-    let containerProbes = [
-      {
-        type: "Liveness",
-        httpGet: {
-          path: "/health",
-          httpHeaders: [{ name: "Custom-Header", value: "Awesome" }],
-          port: 8080
-        },
-        initialDelaySeconds: 3,
-        periodSeconds: 3
-      }
-    ]
+    let networkConfig = {
+      "dapr": daprConfig,
+      //"ingress": ingresConfig
+    }
 
     // Set up a scaling setting
     // TBD: Need to get rules from taskParams. For now, it's a default payload
@@ -83,25 +66,16 @@ async function main() {
       rules: scaleRules 
     }
 
+    // TBD: Find a way to get a value instead of json
+    const containerConfig = taskParams.containersConfig
 
     const containerAppEnvelope: ContainerApp = {
-      configuration: {
-        dapr: daprConfig,
-        // If the key is defined, key shouldn't be empty. So I commented out this line once.
-        // ingress: ingresConfig
-      },
+      configuration: networkConfig,
       location: taskParams.location,
       managedEnvironmentId:
         `/subscriptions/${subscriptionId}/resourceGroups/${taskParams.resourceGroup}/providers/Microsoft.App/managedEnvironments/${taskParams.managedEnvironmentName}`,
       template: {
-        // This is a sample and is hard coded. It should be changed
-        containers: [
-          {
-            name: "simple-hello-world-container",
-            image: "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest",
-            probes: containerProbes,
-          }
-        ],
+        containers: containerConfig,
         scale: scaleConfig
       }
     };
