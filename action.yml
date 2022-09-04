@@ -47,7 +47,7 @@ inputs:
     scale-rules-json:
         description: 'Scale Rules'
         required: false
-    container-config-json:
+    containers-config-json:
         description: 'Container Config'
         required: false
 
