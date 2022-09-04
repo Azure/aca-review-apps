@@ -28,80 +28,44 @@ async function main() {
     console.log("Predeployment Steps Started");
     const client = new ContainerAppsAPIClient(credential, taskParams.subscriptionId);
 
-    // Set up a Dapr configuration
-    // TBD: Determine what is required and what is optional for each condition and set them appropriately.
-    //      For now, it''s off if they don't have everything in place.
-    // Sample: 
-    //      customDomains: [{name: "www.my-name.com", bindingType: "SniEnabled", certificateId: "/subscriptions/a4deccb1-a1f6-40cb-a923-f55a7d22c32d/resourceGroups/rg/providers/Microsoft.App/managedEnvironments/demokube/certificates/my-certificate-for-my-name-dot-com", }, ],
-    const daprConfig = (taskParams.daprEnabled && taskParams.daprAppPort && taskParams.daprAppProtocol) ? {
-      appPort: taskParams.daprAppPort, appProtocol: taskParams.daprAppProtocol, enabled: taskParams.daprEnabled
-    } : {
-      // If any one of these is missing, leave it empty.
+    // TBD: Remove key when there is key without value
+    const daprConfig = {
+      appPort: taskParams.daprAppPort, 
+      appProtocol: taskParams.daprAppProtocol, 
+      enabled: taskParams.daprEnabled
     };
 
-
-    // Set up an ingress configuration
-    // TBD: Determine what is required and what is optional for each condition and set them appropriately.
-    //      For now, it''s off if they don't have everything in place.
-    // Sample: 
-    //      traffic: [ { label: "production", revisionName: "testcontainerApp0-ab1234", weight: 100 } ]
-    // TBD: Need to decide how to represent the associative array
-    //      For now, it's a default payload
-    const ingresConfig = (taskParams.ingressExternal && taskParams.ingressTargetPort && taskParams.ingressTraffic && taskParams.ingressCustomDomains) ? {
+    // TBD: Remove key when there is key without value
+    const ingresConfig = {
       external: taskParams.ingressExternal, 
       targetPort: taskParams.ingressTargetPort, 
-      traffic: taskParams.ingressTraffic, 
-      customDomains: taskParams.ingressCustomDomains
-    } : {
-      // If any one of these is missing, leave it empty.
-    }
+      // traffic: taskParams.ingressTraffic, 
+      // customDomains: taskParams.ingressCustomDomains
+    } 
 
-    // Set up a container probes
-    // TBD: Determine what is required and what is optional for each condition and set them appropriately.
-    //      For now, it's a default payload
-    let containerProbes = [
-      {
-        type: "Liveness",
-        httpGet: {
-          path: "/health",
-          httpHeaders: [{ name: "Custom-Header", value: "Awesome" }],
-          port: 8080
-        },
-        initialDelaySeconds: 3,
-        periodSeconds: 3
-      }
-    ]
-
-    // Set up a scaling setting
-    // TBD: Need to get rules from taskParams. For now, it's a default payload
-    // rules = taskParams.scalingRules
-    const scaleRules = [{ name: "httpscalingrule", custom: { type: "http", metadata: { concurrentRequests: "50" }}}]
-
+    let scaleRules = taskParams.scaleRules
+    // TBD: Remove key when there is key without value
     const scaleConfig = {
       maxReplicas: taskParams.scaleMaxReplicas, 
       minReplicas: taskParams.scaleMinReplicas, 
       rules: scaleRules 
     }
 
+    let networkConfig = {
+      "dapr": daprConfig,
+      "ingress": ingresConfig
+    }
+
+    // TBD: Find a way to get a value instead of json
+    const containersConfig = taskParams.containersConfig
 
     const containerAppEnvelope: ContainerApp = {
-      configuration: {
-        dapr: daprConfig,
-        // If the key is defined, key shouldn't be empty. So I commented out this line once.
-        // ingress: ingresConfig
-      },
+      configuration: networkConfig,
       location: taskParams.location,
       managedEnvironmentId:
         `/subscriptions/${subscriptionId}/resourceGroups/${taskParams.resourceGroup}/providers/Microsoft.App/managedEnvironments/${taskParams.managedEnvironmentName}`,
       template: {
-        // This is a sample and is hard coded. It should be changed
-        containers: [
-          {
-            name: "simple-hello-world-container",
-            image: "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest",
-            probes: containerProbes,
-          }
-        ],
+        containers: containersConfig,
         scale: scaleConfig
       }
     };

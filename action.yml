@@ -26,7 +26,7 @@ inputs:
     dapr-enabled:
         description: 'Enable Dapr'
         required: false
-    ingress-custom-domains:
+    ingress-custom-domains-json:
         description: 'Custom Domain for Ingress'
         required: false
     ingress-external:
@@ -35,7 +35,7 @@ inputs:
     ingress-target-port:
         description: 'Ingress Target Port'
         required: false
-    ingress-traffic:
+    ingress-traffic-json:
         description: 'Ingress Traffic'
         required: false
     scale-max-replicas:
@@ -43,6 +43,12 @@ inputs:
         required: false
     scale-min-replicas:
         description: 'Min Replicas'
+        required: false
+    scale-rules-json:
+        description: 'Scale Rules'
+        required: false
+    containers-config-json:
+        description: 'Container Config'
         required: false
 
 outputs:
