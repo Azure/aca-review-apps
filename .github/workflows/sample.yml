@@ -45,13 +45,16 @@ jobs:
         #     }
         #   ]
         ingress-traffic-json: |
-          [ 
-            { 
-              "label": "production", 
-              "revisionName": "yuhattor-container3--qpxyrnn", 
-              "weight": 100 
-            } 
+          [
           ]
+        # ingress-traffic-json: |
+        #   [ 
+        #     { 
+        #       "label": "production", 
+        #       "revisionName": "yuhattor-container3--qpxyrnn", 
+        #       "weight": 100 
+        #     } 
+        #   ]
         scale-max-replicas: 5
         scale-min-replicas: 1
         scale-rules-json: |
