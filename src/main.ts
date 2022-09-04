@@ -28,18 +28,14 @@ async function main() {
     console.log("Predeployment Steps Started");
     const client = new ContainerAppsAPIClient(credential, taskParams.subscriptionId);
 
-    // Set up a Dapr configuration
-    // TBD: Determine what is required and what is optional for each condition and set them appropriately.
-    //      For now, it''s off if they don't have everything in place.
+    // TBD: Remove key when there is key without value
     const daprConfig = {
       appPort: taskParams.daprAppPort, 
       appProtocol: taskParams.daprAppProtocol, 
       enabled: taskParams.daprEnabled
     };
 
-    // Set up an ingress configuration
-    // TBD: Determine what is required and what is optional for each condition and set them appropriately.
-    //      For now, it's off if they don't have everything in place.
+    // TBD: Remove key when there is key without value
     const ingresConfig = {
       external: taskParams.ingressExternal, 
       targetPort: taskParams.ingressTargetPort, 
@@ -47,18 +43,17 @@ async function main() {
       // customDomains: taskParams.ingressCustomDomains
     } 
 
-    let networkConfig = {
-      "dapr": daprConfig,
-      "ingress": ingresConfig
-    }
-
-    // Set up a scaling setting
     let scaleRules = taskParams.scaleRules
-
+    // TBD: Remove key when there is key without value
     const scaleConfig = {
       maxReplicas: taskParams.scaleMaxReplicas, 
       minReplicas: taskParams.scaleMinReplicas, 
       rules: scaleRules 
+    }
+
+    let networkConfig = {
+      "dapr": daprConfig,
+      "ingress": ingresConfig
     }
 
     // TBD: Find a way to get a value instead of json
