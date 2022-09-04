@@ -1,5 +1,5 @@
-on: [push]
-name: Linux_Container_Workflow
+on: [push, pull_request]
+name: Container Deployment Sample Workflow
 
 jobs:
   build-and-deploy:
