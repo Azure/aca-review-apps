@@ -50,7 +50,7 @@ async function main() {
     }
 
     let networkConfig = {
-      "dapr": daprConfig,
+      //"dapr": daprConfig,
       //"ingress": ingresConfig
     }
 
