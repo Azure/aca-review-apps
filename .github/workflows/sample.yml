@@ -63,7 +63,7 @@ jobs:
               }
             }
           ]
-        container-config-json: | 
+        containers-config-json: | 
           [
             {
               "name":"simple-hello-world-container",
