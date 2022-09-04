@@ -35,12 +35,15 @@ jobs:
         ingress-target-port: 3000
         ingress-custom-domains-json: |
           [
-            {
-              "name": "www.my-name.com", 
-              "bindingType": "SniEnabled", 
-              "certificateId": "/subscriptions/<SubscriptionId>/resourceGroups/<ResourceGroupName>/providers/Microsoft.App/managedEnvironments/<ManagedEnvironmentName>/certificates/<CertificateName>"
-            }
           ]
+        # ingress-custom-domains-json: |
+        #   [
+        #     {
+        #       "name": "www.my-name.com", 
+        #       "bindingType": "SniEnabled", 
+        #       "certificateId": "/subscriptions/<SubscriptionId>/resourceGroups/<ResourceGroupName>/providers/Microsoft.App/managedEnvironments/<ManagedEnvironmentName>/certificates/<CertificateName>"
+        #     }
+        #   ]
         ingress-traffic-json: |
           [ 
             { 
