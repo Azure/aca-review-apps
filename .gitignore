@@ -4,6 +4,8 @@ src.bu
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+lib/*
+
 # User-specific files
 *.suo
 *.user
