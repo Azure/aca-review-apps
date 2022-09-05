@@ -1,4 +1,4 @@
-# (Experimental) GitHub Action for deploying to Azure Container App
+# (Experimental) GitHub Action for Azure Container App
 
 > :warning: **NOTE**: This repository has just been created and is not guaranteed to work. It also contains some sample code inside. Therefore, it has not yet been published to the marketplace. Please do not use this one in a production environment. Contributions are welcome. A beta version will be released at the end of September.
 
