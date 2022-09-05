@@ -55,7 +55,7 @@ outputs:
     container-result:
         description: 'Sample: Container Result'
 branding:
-    icon: 'container-app-logo.svg'
+    icon: 'azure-logo.svg'
     color: 'blue'
 runs:
     using: 'node16'
