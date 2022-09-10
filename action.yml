@@ -49,7 +49,7 @@ inputs:
         required: false
     containers-config-json:
         description: 'Container Config'
-        required: false
+        required: true
 
 outputs:
     container-result:
