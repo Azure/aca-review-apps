@@ -78,8 +78,18 @@ async function main() {
       containerAppEnvelope,
     );
 
-    // TBD: Need to prettify the output.
-    console.log("Deployment Succeeded\n\n" + containerAppDeploymentResult);
+    if (containerAppDeploymentResult.provisioningState == "Succeeded") {
+      console.log("Deployment Succeeded");
+
+      if (ingresConfig.external == true) {
+        let appUrl = "http://"+containerAppDeploymentResult.latestRevisionFqdn+"/"
+        core.setOutput("app-url", appUrl);
+        console.log("Your App has been deployed at: "+appUrl);
+      }
+    } else {
+      core.debug("Deployment Result: "+containerAppDeploymentResult);
+      throw Error("Container Deployment Failed"+containerAppDeploymentResult);
+    }
   }
   catch (error: string | any) {
     console.log("Deployment Failed with Error: " + error);
