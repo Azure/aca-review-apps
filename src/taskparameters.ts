@@ -1,8 +1,10 @@
 import * as core from '@actions/core';
+import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
 import fs = require('fs');
   
 export class TaskParameters {
     private static taskparams: TaskParameters;
+    private _endpoint: IAuthorizer;
 
     // Required basic parameters
     private _resourceGroup: string;
@@ -31,10 +33,12 @@ export class TaskParameters {
     private _containersConfig: any[];
 
 
-    private constructor() {
+    private constructor(endpoint: IAuthorizer) {
+
+        this._endpoint = endpoint;
+        this._subscriptionId = endpoint.subscriptionID;
 
         // Required basic parameters
-        this._subscriptionId = core.getInput('subscription-id',{ required: true } );
         this._resourceGroup = core.getInput('resource-group', { required: true });
         this._containerAppName = core.getInput('name', { required: true });
         this._location = core.getInput('location', { required: true });
@@ -70,9 +74,9 @@ export class TaskParameters {
     // TBD: Need to validate that the specific params for scaleRules exist in the input json
     // TBD: Need to validate that the specific params for containersConfig like 'name' and 'image' exist in the input json
 
-    public static getTaskParams() {
+    public static getTaskParams(endpoint: IAuthorizer) {
         if(!this.taskparams) {
-            this.taskparams = new TaskParameters();
+            this.taskparams = new TaskParameters(endpoint);
         }
         return this.taskparams;
     }

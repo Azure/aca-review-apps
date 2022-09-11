@@ -2,6 +2,8 @@ import * as core from "@actions/core";
 import * as crypto from "crypto";
 import { ContainerAppsAPIClient, ContainerApp } from "@azure/arm-appcontainers";
 import { TokenCredential, DefaultAzureCredential } from "@azure/identity";
+import { AuthorizerFactory } from "azure-actions-webclient/AuthorizerFactory";
+import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
 
 import { TaskParameters } from "./taskparameters";
 
@@ -19,7 +21,8 @@ async function main() {
     let userAgentString = (!!prefix ? `${prefix}+` : '') + `GITHUBACTIONS_${actionName}_${usrAgentRepo}`;
     core.exportVariable('AZURE_HTTP_USER_AGENT', userAgentString);
 
-    var taskParams = TaskParameters.getTaskParams();
+    let endpoint: IAuthorizer = await AuthorizerFactory.getAuthorizer();
+    var taskParams = TaskParameters.getTaskParams(endpoint);
     let credential: TokenCredential = new DefaultAzureCredential()
 
     // TBD: Need to get subscriptionId not from taskParams, but from credential.
