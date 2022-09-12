@@ -41,9 +41,6 @@ inputs:
     scale-min-replicas:
         description: 'Min Replicas'
         required: false
-    scale-rules-json:
-        description: 'Scale Rules'
-        required: false
     containers-config-json:
         description: 'Container Config'
         required: true

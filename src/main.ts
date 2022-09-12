@@ -62,16 +62,13 @@ async function main() {
       delete ingresConfig.traffic
     };
 
-    let scaleRules = taskParams.scaleRules
     // TBD: Remove key when there is key without value
     const scaleConfig: {
       maxReplicas: number,
       minReplicas: number,
-      rules: any[]
     } = {
       maxReplicas: taskParams.scaleMaxReplicas, 
       minReplicas: taskParams.scaleMinReplicas, 
-      rules: scaleRules 
     };
 
     let networkConfig: {

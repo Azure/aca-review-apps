@@ -46,18 +46,6 @@ jobs:
         #   ]
         scale-max-replicas: 5
         scale-min-replicas: 1
-        scale-rules-json: |
-          [
-            {
-              "name": "httpscalingrule",
-              "custom": { 
-                "type": "http", 
-                "metadata": { 
-                  "concurrentRequests": "50" 
-                }
-              }
-            }
-          ]
         containers-config-json: | 
           [
             {

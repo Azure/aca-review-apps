@@ -26,7 +26,6 @@ export class TaskParameters {
     // Optional scale parameters
     private _scaleMaxReplicas: number;
     private _scaleMinReplicas: number;
-    private _scaleRules: any[];
 
     // Required container config parameters
     private _containersConfig: any[];
@@ -57,8 +56,6 @@ export class TaskParameters {
         // Optional scale parameters
         this._scaleMaxReplicas = parseInt(core.getInput('scale-max-replicas', { required: false }));
         this._scaleMinReplicas = parseInt(core.getInput('scale-min-replicas', { required: false }));
-        let scaleRulesJsonString = core.getInput('scale-rules-json', { required: false });
-        this._scaleRules = scaleRulesJsonString == "" ? [] : JSON.parse(scaleRulesJsonString)
 
         // Required container config parameters
         let containerConfigJsonString = core.getInput('containers-config-json', { required: true });
@@ -67,7 +64,6 @@ export class TaskParameters {
 
     // JSON Validation
     // TBD: Need to validate that the specific params for ingressTraffic exist in the input json
-    // TBD: Need to validate that the specific params for scaleRules exist in the input json
     // TBD: Need to validate that the specific params for containersConfig like 'name' and 'image' exist in the input json
 
     public static getTaskParams(endpoint: IAuthorizer) {
@@ -131,10 +127,6 @@ export class TaskParameters {
 
     public get scaleMinReplicas(){
         return this._scaleMinReplicas;
-    }
-
-    public get scaleRules(){
-        return this._scaleRules;
     }
 
     // Required container config parameters
