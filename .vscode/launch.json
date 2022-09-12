@@ -34,7 +34,7 @@
         // "INPUT_INGRESS-TARGET-PORT": "<REPLACE>",
         // "INPUT_INGRESS-TRAFFIC-JSON": "<REPLACE>",
 
-        // Scale configdocker
+        // Scale config
         // "INPUT_SCALE-MIN-REPLICAS": "<REPLACE>",
         // "INPUT_SCALE-MAX-REPLICAS": "<REPLACE>",
         // "INPUT_SCALE-RULES-JSON": "<REPLACE>",
