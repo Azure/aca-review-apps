@@ -21,7 +21,6 @@ export class TaskParameters {
     // Optional Ingress parameters
     private _ingressExternal: boolean;
     private _ingressTargetPort: number;
-    private _ingressCustomDomains: any[]; 
     private _ingressTraffic: any[];
 
     // Optional scale parameters
@@ -52,8 +51,6 @@ export class TaskParameters {
         // Optional ingress parameters
         this._ingressExternal = core.getInput('ingress-external', { required: false }) == "true";
         this._ingressTargetPort = parseInt(core.getInput('ingress-target-port', { required: false }));
-        let ingressCustomDomainsJsonString = core.getInput('ingress-custom-domains-json', { required: false });
-        this._ingressCustomDomains = ingressCustomDomainsJsonString == "" ? [] : JSON.parse(ingressCustomDomainsJsonString)
         let ingressTrafficJsonString = core.getInput('ingress-traffic-json', { required: false});
         this._ingressTraffic = ingressTrafficJsonString == "" ? [] : JSON.parse(ingressTrafficJsonString)
 
@@ -69,7 +66,6 @@ export class TaskParameters {
     }
 
     // JSON Validation
-    // TBD: Need to validate that the specific params for ingressDomains exist in the input json
     // TBD: Need to validate that the specific params for ingressTraffic exist in the input json
     // TBD: Need to validate that the specific params for scaleRules exist in the input json
     // TBD: Need to validate that the specific params for containersConfig like 'name' and 'image' exist in the input json
@@ -126,10 +122,6 @@ export class TaskParameters {
 
     public get ingressTraffic(){
         return this._ingressTraffic;
-    }
-
-    public get ingressCustomDomains(){
-       return this._ingressCustomDomains;
     }
 
     // Optional scale parameters

@@ -53,12 +53,10 @@ async function main() {
       external: boolean,
       targetPort?: number,
       traffic?: any[],
-      customDomains?: any[]
     } = {
       external: taskParams.ingressExternal, 
       targetPort: taskParams.ingressTargetPort, 
       // traffic: taskParams.ingressTraffic, 
-      // customDomains: taskParams.ingressCustomDomains
     };
     if (taskParams.ingressTraffic.length == 0) {
       delete ingresConfig.traffic

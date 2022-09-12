@@ -26,9 +26,6 @@ inputs:
     dapr-enabled:
         description: 'Enable Dapr'
         required: false
-    ingress-custom-domains-json:
-        description: 'Custom Domain for Ingress'
-        required: false
     ingress-external:
         description: 'External Ingress'
         required: false

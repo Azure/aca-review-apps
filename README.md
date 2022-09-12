@@ -85,7 +85,6 @@ SAMPLE WORKFLOW WILL BE HERE
     dapr-app-port: 3000
     dapr-app-protocol: 'http'
     dapr-enabled: true
-    ingress-custom-domains: ""
     ingress-external: true
     ingress-target-port: 3000
     ingress-traffic: ""
