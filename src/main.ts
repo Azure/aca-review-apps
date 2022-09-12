@@ -29,32 +29,60 @@ async function main() {
     const client = new ContainerAppsAPIClient(credential, taskParams.subscriptionId);
 
     // TBD: Remove key when there is key without value
-    const daprConfig = {
+    const daprConfig: {
+      appPort?: number,
+      appProtocol?: string,
+      enabled: boolean
+    } = {
       appPort: taskParams.daprAppPort, 
       appProtocol: taskParams.daprAppProtocol, 
       enabled: taskParams.daprEnabled
     };
+    if (isNaN(taskParams.daprAppPort)) {
+      delete daprConfig.appPort
+    };
+    if (taskParams.daprAppProtocol == "") {
+      delete daprConfig.appProtocol
+    };
 
     // TBD: Remove key when there is key without value
-    const ingresConfig = {
+    const ingresConfig: {
+      external: boolean,
+      targetPort?: number,
+      traffic?: any[],
+      customDomains?: any[]
+    } = {
       external: taskParams.ingressExternal, 
       targetPort: taskParams.ingressTargetPort, 
       // traffic: taskParams.ingressTraffic, 
       // customDomains: taskParams.ingressCustomDomains
-    } 
+    };
+    if (taskParams.ingressTraffic.length == 0) {
+      delete ingresConfig.traffic
+    };
 
     let scaleRules = taskParams.scaleRules
     // TBD: Remove key when there is key without value
-    const scaleConfig = {
+    const scaleConfig: {
+      maxReplicas: number,
+      minReplicas: number,
+      rules: any[]
+    } = {
       maxReplicas: taskParams.scaleMaxReplicas, 
       minReplicas: taskParams.scaleMinReplicas, 
       rules: scaleRules 
-    }
+    };
 
-    let networkConfig = {
-      "dapr": daprConfig,
-      "ingress": ingresConfig
-    }
+    let networkConfig: {
+      dapr: object,
+      ingress?: object
+    } = {
+      dapr: daprConfig,
+      ingress: ingresConfig
+    };
+    if (taskParams.ingressExternal == false) {
+      delete networkConfig.ingress
+    };
 
     // TBD: Find a way to get a value instead of json
     const containersConfig = taskParams.containersConfig
