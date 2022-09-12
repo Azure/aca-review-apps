@@ -24,8 +24,6 @@ async function main() {
     let endpoint: IAuthorizer = await AuthorizerFactory.getAuthorizer();
     var taskParams = TaskParameters.getTaskParams(endpoint);
     let credential: TokenCredential = new DefaultAzureCredential()
-
-    // TBD: Need to get subscriptionId not from taskParams, but from credential.
     let subscriptionId = taskParams.subscriptionId
 
     console.log("Predeployment Steps Started");

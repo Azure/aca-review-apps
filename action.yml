@@ -11,9 +11,6 @@ inputs:
     name:
         description: 'TBD: Name of the Container Group Instance - this should be aquired with cred automatically'
         required: true
-    subscription-id:
-        description: 'Name of the Subscription ID'
-        required: true
     managed-environment-name:
         description: 'Name of the Managed Environment'
         required: true
