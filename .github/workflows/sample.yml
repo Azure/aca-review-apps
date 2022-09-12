@@ -34,16 +34,13 @@ jobs:
         ingress-external: true
         ingress-target-port: 3000
         ingress-traffic-json: |
-          [
+          [ 
+            { 
+              "label": "production", 
+              "revisionName": "yuhattor-container3--qpxyrnn", 
+              "weight": 100 
+            } 
           ]
-        # ingress-traffic-json: |
-        #   [ 
-        #     { 
-        #       "label": "production", 
-        #       "revisionName": "yuhattor-container3--qpxyrnn", 
-        #       "weight": 100 
-        #     } 
-        #   ]
         scale-max-replicas: 5
         scale-min-replicas: 1
         containers-config-json: | 
@@ -51,23 +48,6 @@ jobs:
             {
               "name":"simple-hello-world-container",
               "image": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest",
-              "probes":[
-                 {
-                    "type":"Liveness",
-                    "httpGet":{
-                       "path":"/health",
-                       "httpHeaders":[
-                          {
-                             "name":"Custom-Header",
-                             "value":"Awesome"
-                          }
-                       ],
-                       "port":8080
-                    },
-                    "initialDelaySeconds":3,
-                    "periodSeconds":3
-                 }
-              ]
             }
           ]
 
