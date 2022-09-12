@@ -24,8 +24,6 @@ async function main() {
     let endpoint: IAuthorizer = await AuthorizerFactory.getAuthorizer();
     var taskParams = TaskParameters.getTaskParams(endpoint);
     let credential: TokenCredential = new DefaultAzureCredential()
-
-    // TBD: Need to get subscriptionId not from taskParams, but from credential.
     let subscriptionId = taskParams.subscriptionId
 
     console.log("Predeployment Steps Started");
@@ -53,27 +51,22 @@ async function main() {
       external: boolean,
       targetPort?: number,
       traffic?: any[],
-      customDomains?: any[]
     } = {
       external: taskParams.ingressExternal, 
       targetPort: taskParams.ingressTargetPort, 
       // traffic: taskParams.ingressTraffic, 
-      // customDomains: taskParams.ingressCustomDomains
     };
     if (taskParams.ingressTraffic.length == 0) {
       delete ingresConfig.traffic
     };
 
-    let scaleRules = taskParams.scaleRules
     // TBD: Remove key when there is key without value
     const scaleConfig: {
       maxReplicas: number,
       minReplicas: number,
-      rules: any[]
     } = {
       maxReplicas: taskParams.scaleMaxReplicas, 
       minReplicas: taskParams.scaleMinReplicas, 
-      rules: scaleRules 
     };
 
     let networkConfig: {

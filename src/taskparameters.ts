@@ -21,13 +21,11 @@ export class TaskParameters {
     // Optional Ingress parameters
     private _ingressExternal: boolean;
     private _ingressTargetPort: number;
-    private _ingressCustomDomains: any[]; 
     private _ingressTraffic: any[];
 
     // Optional scale parameters
     private _scaleMaxReplicas: number;
     private _scaleMinReplicas: number;
-    private _scaleRules: any[];
 
     // Required container config parameters
     private _containersConfig: any[];
@@ -52,16 +50,12 @@ export class TaskParameters {
         // Optional ingress parameters
         this._ingressExternal = core.getInput('ingress-external', { required: false }) == "true";
         this._ingressTargetPort = parseInt(core.getInput('ingress-target-port', { required: false }));
-        let ingressCustomDomainsJsonString = core.getInput('ingress-custom-domains-json', { required: false });
-        this._ingressCustomDomains = ingressCustomDomainsJsonString == "" ? [] : JSON.parse(ingressCustomDomainsJsonString)
         let ingressTrafficJsonString = core.getInput('ingress-traffic-json', { required: false});
         this._ingressTraffic = ingressTrafficJsonString == "" ? [] : JSON.parse(ingressTrafficJsonString)
 
         // Optional scale parameters
         this._scaleMaxReplicas = parseInt(core.getInput('scale-max-replicas', { required: false }));
         this._scaleMinReplicas = parseInt(core.getInput('scale-min-replicas', { required: false }));
-        let scaleRulesJsonString = core.getInput('scale-rules-json', { required: false });
-        this._scaleRules = scaleRulesJsonString == "" ? [] : JSON.parse(scaleRulesJsonString)
 
         // Required container config parameters
         let containerConfigJsonString = core.getInput('containers-config-json', { required: true });
@@ -69,9 +63,7 @@ export class TaskParameters {
     }
 
     // JSON Validation
-    // TBD: Need to validate that the specific params for ingressDomains exist in the input json
     // TBD: Need to validate that the specific params for ingressTraffic exist in the input json
-    // TBD: Need to validate that the specific params for scaleRules exist in the input json
     // TBD: Need to validate that the specific params for containersConfig like 'name' and 'image' exist in the input json
 
     public static getTaskParams(endpoint: IAuthorizer) {
@@ -128,10 +120,6 @@ export class TaskParameters {
         return this._ingressTraffic;
     }
 
-    public get ingressCustomDomains(){
-       return this._ingressCustomDomains;
-    }
-
     // Optional scale parameters
     public get scaleMaxReplicas(){
         return this._scaleMaxReplicas;
@@ -139,10 +127,6 @@ export class TaskParameters {
 
     public get scaleMinReplicas(){
         return this._scaleMinReplicas;
-    }
-
-    public get scaleRules(){
-        return this._scaleRules;
     }
 
     // Required container config parameters

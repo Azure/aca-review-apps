@@ -26,71 +26,27 @@ jobs:
         resource-group: sample-rg
         name: yuhattor-container3
         location: 'East US'
-        subscription-id: 'a4deccb1-a1f6-40cb-a923-f55a7d22c32d'
         managed-environment-name: 'my-container-env'
         dapr-app-port: 3000
         dapr-app-protocol: 'http'
         dapr-enabled: true
         ingress-external: true
         ingress-target-port: 3000
-        ingress-custom-domains-json: |
-          [
-          ]
-        # ingress-custom-domains-json: |
-        #   [
-        #     {
-        #       "name": "www.my-name.com", 
-        #       "bindingType": "SniEnabled", 
-        #       "certificateId": "/subscriptions/<SubscriptionId>/resourceGroups/<ResourceGroupName>/providers/Microsoft.App/managedEnvironments/<ManagedEnvironmentName>/certificates/<CertificateName>"
-        #     }
-        #   ]
         ingress-traffic-json: |
-          [
+          [ 
+            { 
+              "label": "production", 
+              "revisionName": "yuhattor-container3--qpxyrnn", 
+              "weight": 100 
+            } 
           ]
-        # ingress-traffic-json: |
-        #   [ 
-        #     { 
-        #       "label": "production", 
-        #       "revisionName": "yuhattor-container3--qpxyrnn", 
-        #       "weight": 100 
-        #     } 
-        #   ]
         scale-max-replicas: 5
         scale-min-replicas: 1
-        scale-rules-json: |
-          [
-            {
-              "name": "httpscalingrule",
-              "custom": { 
-                "type": "http", 
-                "metadata": { 
-                  "concurrentRequests": "50" 
-                }
-              }
-            }
-          ]
         containers-config-json: | 
           [
             {
               "name":"simple-hello-world-container",
               "image": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest",
-              "probes":[
-                 {
-                    "type":"Liveness",
-                    "httpGet":{
-                       "path":"/health",
-                       "httpHeaders":[
-                          {
-                             "name":"Custom-Header",
-                             "value":"Awesome"
-                          }
-                       ],
-                       "port":8080
-                    },
-                    "initialDelaySeconds":3,
-                    "periodSeconds":3
-                 }
-              ]
             }
           ]
 

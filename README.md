@@ -80,12 +80,10 @@ SAMPLE WORKFLOW WILL BE HERE
     resource-group: sample-rg
     name: yuhattor-test
     location: 'East US'
-    subscription-id: 'a4deccb1-a1f6-40cb-a923-f55a7d22c32d'
     managed-environment-name: 'my-container-env'
     dapr-app-port: 3000
     dapr-app-protocol: 'http'
     dapr-enabled: true
-    ingress-custom-domains: ""
     ingress-external: true
     ingress-target-port: 3000
     ingress-traffic: ""
