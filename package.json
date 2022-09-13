@@ -5,6 +5,7 @@
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
+    "act": "act push -P ubuntu-latest=catthehacker/ubuntu:act-22.04 --env-file .act/.env --secret-file .act/.secrets --verbose",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
