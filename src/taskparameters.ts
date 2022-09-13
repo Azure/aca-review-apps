@@ -12,6 +12,7 @@ export class TaskParameters {
     private _location: string; 
     private _subscriptionId: string;
     private _managedEnvironmentName: string;
+    private _containersConfigPath: string;
 
     // Optional Dapr parameters
     private _daprEnabled: boolean;
@@ -27,9 +28,6 @@ export class TaskParameters {
     private _scaleMaxReplicas: number;
     private _scaleMinReplicas: number;
 
-    // Required container config parameters
-    private _containersConfig: any[];
-
 
     private constructor(endpoint: IAuthorizer) {
 
@@ -39,8 +37,9 @@ export class TaskParameters {
         // Required basic parameters
         this._resourceGroup = core.getInput('resource-group', { required: true });
         this._containerAppName = core.getInput('name', { required: true });
-        this._location = core.getInput('location', { required: true });
-        this._managedEnvironmentName = core.getInput('managed-environment-name', { required: true });
+        this._location = core.getInput('location', { required: false });
+        this._managedEnvironmentName = core.getInput('managed-environment-name', { required: false });
+        this._containersConfigPath = core.getInput('containers-config-path', { required: true});
 
         // Optional Dapr parameters
         this._daprAppPort = parseInt(core.getInput('dapr-app-port', { required: false }));
@@ -56,10 +55,6 @@ export class TaskParameters {
         // Optional scale parameters
         this._scaleMaxReplicas = parseInt(core.getInput('scale-max-replicas', { required: false }));
         this._scaleMinReplicas = parseInt(core.getInput('scale-min-replicas', { required: false }));
-
-        // Required container config parameters
-        let containerConfigJsonString = core.getInput('containers-config-json', { required: true });
-        this._containersConfig = JSON.parse(containerConfigJsonString)
     }
 
     // JSON Validation
@@ -92,6 +87,10 @@ export class TaskParameters {
 
     public get managedEnvironmentName() {
         return this._managedEnvironmentName;
+    }
+
+    public get containersConfigPath() {
+        return this._containersConfigPath;
     }
 
     // Optional Dapr parameters
@@ -127,10 +126,5 @@ export class TaskParameters {
 
     public get scaleMinReplicas(){
         return this._scaleMinReplicas;
-    }
-
-    // Required container config parameters
-    public get containersConfig() {
-        return this._containersConfig;
     }
 }

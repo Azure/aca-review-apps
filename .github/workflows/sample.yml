@@ -30,28 +30,4 @@ jobs:
       with:
         resource-group: rg-hoge
         name: ctapp-hoge
-        location: 'Japan East'
-        managed-environment-name: 'ctenv-hoge'
-        dapr-app-port: 3000
-        dapr-app-protocol: 'http'
-        dapr-enabled: true
-        ingress-external: true
-        ingress-target-port: 3000
-        ingress-traffic-json: |
-          [ 
-            { 
-              "label": "production", 
-              "revisionName": "yuhattor-container3--qpxyrnn", 
-              "weight": 100 
-            } 
-          ]
-        scale-max-replicas: 5
-        scale-min-replicas: 1
-        containers-config-json: | 
-          [
-            {
-              "name":"simple-hello-world-container",
-              "image": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
-            }
-          ]
-
+        containers-config-path: './src/containers-config.yml'
