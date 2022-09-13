@@ -1,5 +1,7 @@
 import * as core from "@actions/core";
 import * as crypto from "crypto";
+import fs from 'fs'
+import YAML from 'yaml'
 import { ContainerAppsAPIClient, ContainerApp } from "@azure/arm-appcontainers";
 import { TokenCredential, DefaultAzureCredential } from "@azure/identity";
 import { AuthorizerFactory } from "azure-actions-webclient/AuthorizerFactory";
@@ -24,10 +26,12 @@ async function main() {
     let endpoint: IAuthorizer = await AuthorizerFactory.getAuthorizer();
     var taskParams = TaskParameters.getTaskParams(endpoint);
     let credential: TokenCredential = new DefaultAzureCredential()
-    let subscriptionId = taskParams.subscriptionId
 
     console.log("Predeployment Steps Started");
     const client = new ContainerAppsAPIClient(credential, taskParams.subscriptionId);
+
+    const parametersFile = fs.readFileSync('./src/parameters.yml', 'utf8')
+    const parameters = YAML.parse(parametersFile)
 
     // TBD: Remove key when there is key without value
     const daprConfig: {
@@ -35,39 +39,43 @@ async function main() {
       appProtocol?: string,
       enabled: boolean
     } = {
-      appPort: taskParams.daprAppPort, 
-      appProtocol: taskParams.daprAppProtocol, 
-      enabled: taskParams.daprEnabled
-    };
-    if (isNaN(taskParams.daprAppPort)) {
+      appPort: parameters["dapr-app-port"],
+      appProtocol: parameters["dapr-app-protocol"],
+      enabled: parameters["dapr-enabled"]
+    }
+    if (parameters["dapr-app-port"] == undefined) {
       delete daprConfig.appPort
-    };
-    if (taskParams.daprAppProtocol == "") {
+    }
+    if (parameters["dapr-app-protocol"] == undefined) {
       delete daprConfig.appProtocol
-    };
+    }
 
     // TBD: Remove key when there is key without value
     const ingresConfig: {
       external: boolean,
       targetPort?: number,
       traffic?: any[],
+      customDomains?: any[]
     } = {
-      external: taskParams.ingressExternal, 
-      targetPort: taskParams.ingressTargetPort, 
-      // traffic: taskParams.ingressTraffic, 
-    };
-    if (taskParams.ingressTraffic.length == 0) {
+      external: parameters["ingress-external"],
+      targetPort: parameters["ingress-target-port"],
+      traffic: parameters["ingress-traffic-json"],
+      customDomains: parameters["ingress-custom-domains-json"]
+    }
+    if (parameters["ingress-traffic-json"] == undefined) {
       delete ingresConfig.traffic
-    };
+    }
 
     // TBD: Remove key when there is key without value
     const scaleConfig: {
       maxReplicas: number,
       minReplicas: number,
+      rules: any[]
     } = {
-      maxReplicas: taskParams.scaleMaxReplicas, 
-      minReplicas: taskParams.scaleMinReplicas, 
-    };
+      maxReplicas: parameters["scale-max-replicas"],
+      minReplicas: parameters["scale-min-replicas"],
+      rules: parameters["scale-rules-json"]
+    }
 
     let networkConfig: {
       dapr: object,
@@ -75,21 +83,28 @@ async function main() {
     } = {
       dapr: daprConfig,
       ingress: ingresConfig
-    };
-    if (taskParams.ingressExternal == false) {
+    }
+    if (parameters["ingress-external"] == false || parameters["ingress-external"] == undefined) {
       delete networkConfig.ingress
-    };
+    }
 
     // TBD: Find a way to get a value instead of json
-    const containersConfig = taskParams.containersConfig
+    const containesrConfigFile = fs.readFileSync(taskParams.containersConfigPath, 'utf8');
+    const containersConfig = YAML.parse(containesrConfigFile);
+    let selectedContainerConfig;
+    containersConfig.forEach((containerConfig: any) => {
+      if (containerConfig.name == "acatest1") {
+        selectedContainerConfig = [containerConfig]
+      }
+    });
 
     const containerAppEnvelope: ContainerApp = {
       configuration: networkConfig,
-      location: taskParams.location,
+      location: parameters["location"],
       managedEnvironmentId:
-        `/subscriptions/${subscriptionId}/resourceGroups/${taskParams.resourceGroup}/providers/Microsoft.App/managedEnvironments/${taskParams.managedEnvironmentName}`,
+        `/subscriptions/${taskParams.subscriptionId}/resourceGroups/${taskParams.resourceGroup}/providers/Microsoft.App/managedEnvironments/${parameters["managed-environment-name"]}`,
       template: {
-        containers: containersConfig,
+        containers: selectedContainerConfig,
         scale: scaleConfig
       }
     };
