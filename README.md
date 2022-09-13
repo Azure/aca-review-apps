@@ -117,6 +117,13 @@ SAMPLE WORKFLOW WILL BE HERE
 
 ```
 
+### How to develop/test this Action 
+This action can be tried on not only GitHub Actions workflow but also your local PC or GitHub Codespaces.
+
+If you use Visual Studio Code, debugging this action with breakpoints can be used by running [`Launch Program` configuration](./.vscode/launch.json#10).
+
+Also, a devcontainer image in this repo includes [`Docker-in-Docker` enabled devcontainer](https://github.com/microsoft/vscode-dev-containers/blob/main/script-library/docs/docker-in-docker.md) and [`act`](https://github.com/nektos/act), so you can try your workflow with this action by [`npm run act`](./package.json#L8) on Visual Studio Code Remote-Container extension or GitHub Codespaces.  
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
@@ -130,3 +137,4 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
