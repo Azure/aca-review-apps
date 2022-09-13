@@ -120,9 +120,10 @@ SAMPLE WORKFLOW WILL BE HERE
 ### How to develop/test this Action 
 This action can be tried on not only GitHub Actions workflow but also your local PC or GitHub Codespaces.
 
-If you use Visual Studio Code, debugging this action with breakpoints can be used by running [`Launch Program` configuration](./.vscode/launch.json#10).
+If you use Visual Studio Code, debugging this action with breakpoints can be used by running [`Launch Program` configuration](./.vscode/launch.json#L10).
+![image](https://user-images.githubusercontent.com/4566555/189843026-61153630-4151-4e6c-8a1e-16163aec0910.png)
 
-Also, a devcontainer image in this repo includes [`Docker-in-Docker` enabled devcontainer](https://github.com/microsoft/vscode-dev-containers/blob/main/script-library/docs/docker-in-docker.md) and [`act`](https://github.com/nektos/act), so you can try your workflow with this action by [`npm run act`](./package.json#L8) on Visual Studio Code Remote-Container extension or GitHub Codespaces.  
+Also, a devcontainer image in this repo includes [`Docker-in-Docker` enabled devcontainer](https://github.com/microsoft/vscode-dev-containers/blob/main/script-library/docs/docker-in-docker.md) and [`act`](https://github.com/nektos/act). So, you can try your workflow with this action by executing [`npm run act`](./package.json#L8) on Visual Studio Code Remote-Container extension or GitHub Codespaces without pushing it to GitHub.
 
 ## Contributing
 
