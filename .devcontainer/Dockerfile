@@ -12,3 +12,12 @@ FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:0-${VARIANT}
 
 # [Optional] Uncomment if you want to install more global node packages
 # RUN su node -c "npm install -g <your-package-list -here>"
+
+COPY library-scripts/*.sh /tmp/library-scripts/
+
+ENV DOCKER_BUILDKIT=1
+RUN apt-get update && /bin/bash /tmp/library-scripts/docker-in-docker-debian.sh \ 
+    && cd / && curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
+ENTRYPOINT ["/usr/local/share/docker-init.sh"]
+VOLUME [ "/var/lib/docker" ]
+CMD ["sleep", "infinity"]

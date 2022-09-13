@@ -34,7 +34,7 @@
         // "INPUT_INGRESS-TARGET-PORT": "<REPLACE>",
         // "INPUT_INGRESS-TRAFFIC-JSON": "<REPLACE>",
 
-        // Scale configdocker
+        // Scale config
         // "INPUT_SCALE-MIN-REPLICAS": "<REPLACE>",
         // "INPUT_SCALE-MAX-REPLICAS": "<REPLACE>",
         // "INPUT_SCALE-RULES-JSON": "<REPLACE>",
@@ -42,7 +42,7 @@
         // Containers config
         // "INPUT_CONTAINERS-CONFIG-JSON": "<REPLACE>",
 
-        // vaules for EnvironmentCredential class
+        // values for EnvironmentCredential class
         // "AZURE_CLIENT_ID": "<REPLACE>",
         // "AZURE_TENANT_ID": "<REPLACE>",
         // "AZURE_CLIENT_SECRET": "<REPLACE>"
