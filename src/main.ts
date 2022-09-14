@@ -93,7 +93,7 @@ async function main() {
       configuration: networkConfig,
       location: currentAppProperty.location,
       managedEnvironmentId:
-      `/subscriptions/${taskParams.subscriptionId}/resourceGroups/${taskParams.resourceGroup}/providers/Microsoft.App/managedEnvironments/${managedEnvironmentName}`,
+        `/subscriptions/${taskParams.subscriptionId}/resourceGroups/${taskParams.resourceGroup}/providers/Microsoft.App/managedEnvironments/${managedEnvironmentName}`,
       template: {
         containers: containerConfig,
         scale: scaleConfig
