@@ -34,3 +34,4 @@ jobs:
         resource-group: rg-hoge
         name: ctapp-hoge
         image: mcr.microsoft.com/azuredocs/containerapps-helloworld:latest
+        commit-hash: ${{ github.sha }}

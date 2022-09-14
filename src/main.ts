@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 import * as crypto from "crypto";
 import fs from 'fs'
 import YAML from 'yaml'
-import { ContainerAppsAPIClient, ContainerApp } from "@azure/arm-appcontainers";
+import { ContainerAppsAPIClient, ContainerApp, TrafficWeight } from "@azure/arm-appcontainers";
 import { TokenCredential, DefaultAzureCredential } from "@azure/identity";
 import { AuthorizerFactory } from "azure-actions-webclient/AuthorizerFactory";
 import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
@@ -33,6 +33,27 @@ async function main() {
     const currentAppProperty = await client.containerApps.get(taskParams.resourceGroup, taskParams.containerAppName);
 
     // TBD: Remove key when there is key without value
+
+    let currentProductionRevisionName: string | undefined = '';
+    currentAppProperty.configuration!.ingress!.traffic!.forEach((traffic: TrafficWeight) => {
+      if (traffic.weight == 100) {
+        currentProductionRevisionName = traffic.revisionName!;
+      }
+    });
+
+    const traffic = [
+      {
+        revisionName: currentProductionRevisionName,
+        weight: 100,
+        latestRevision: false
+      },
+      {
+        revisionName: `${taskParams.containerAppName}--${taskParams.commitHash}`,
+        weight: 0,
+        latestRevision: false
+      }
+    ]
+
     const ingresConfig: {
       external: boolean,
       targetPort?: number,
@@ -41,11 +62,8 @@ async function main() {
     } = {
       external: currentAppProperty.configuration!.ingress!.external!, 
       targetPort: currentAppProperty.configuration!.ingress!.targetPort!, 
-      traffic: currentAppProperty.configuration!.ingress!.traffic!, 
+      traffic: traffic,
       customDomains: currentAppProperty.configuration!.ingress!.customDomains! || []
-    }
-    if (ingresConfig.traffic == undefined) {
-      delete ingresConfig.traffic
     }
 
     // TBD: Remove key when there is key without value
@@ -69,10 +87,12 @@ async function main() {
 
     let networkConfig: {
       dapr: object,
-      ingress?: object
+      ingress?: object,
+      activeRevisionsMode?: string
     } = {
       dapr: currentAppProperty.configuration!.dapr!,
-      ingress: ingresConfig
+      ingress: ingresConfig,
+      activeRevisionsMode: "Multiple"
     }
     if (ingresConfig.external == false || ingresConfig.external == undefined) {
       delete networkConfig.ingress
@@ -96,7 +116,8 @@ async function main() {
         `/subscriptions/${taskParams.subscriptionId}/resourceGroups/${taskParams.resourceGroup}/providers/Microsoft.App/managedEnvironments/${managedEnvironmentName}`,
       template: {
         containers: containerConfig,
-        scale: scaleConfig
+        scale: scaleConfig,
+        revisionSuffix: taskParams.commitHash
       }
     };
 
