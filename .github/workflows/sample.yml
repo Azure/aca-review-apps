@@ -15,11 +15,14 @@ jobs:
         node-version: '16.13.0'
         registry-url: 'https://npm.pkg.github.com'
 
+    - run: npm install
+    - run: tsc
+
     # local debugging only.
     # Remove or comment out this step when running on GitHub.
-    - run: |
-        which az || curl -sL https://aka.ms/InstallAzureCLIDeb | bash
-        npm install && npm run build
+    # - run: |
+    #     which az || curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+    #     npm install && npm run build
 
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
@@ -30,4 +33,4 @@ jobs:
       with:
         resource-group: rg-hoge
         name: ctapp-hoge
-        containers-config-path: './src/containers-config.yml'
+        image: mcr.microsoft.com/azuredocs/containerapps-helloworld:latest

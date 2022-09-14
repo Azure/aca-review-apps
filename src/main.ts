@@ -30,25 +30,7 @@ async function main() {
     console.log("Predeployment Steps Started");
     const client = new ContainerAppsAPIClient(credential, taskParams.subscriptionId);
 
-    const parametersFile = fs.readFileSync('./src/parameters.yml', 'utf8')
-    const parameters = YAML.parse(parametersFile)
-
-    // TBD: Remove key when there is key without value
-    const daprConfig: {
-      appPort?: number,
-      appProtocol?: string,
-      enabled: boolean
-    } = {
-      appPort: parameters["dapr-app-port"],
-      appProtocol: parameters["dapr-app-protocol"],
-      enabled: parameters["dapr-enabled"]
-    }
-    if (parameters["dapr-app-port"] == undefined) {
-      delete daprConfig.appPort
-    }
-    if (parameters["dapr-app-protocol"] == undefined) {
-      delete daprConfig.appProtocol
-    }
+    const currentAppProperty = await client.containerApps.get(taskParams.resourceGroup, taskParams.containerAppName);
 
     // TBD: Remove key when there is key without value
     const ingresConfig: {
@@ -57,12 +39,12 @@ async function main() {
       traffic?: any[],
       customDomains?: any[]
     } = {
-      external: parameters["ingress-external"],
-      targetPort: parameters["ingress-target-port"],
-      traffic: parameters["ingress-traffic-json"],
-      customDomains: parameters["ingress-custom-domains-json"]
+      external: currentAppProperty.configuration!.ingress!.external!, 
+      targetPort: currentAppProperty.configuration!.ingress!.targetPort!, 
+      traffic: currentAppProperty.configuration!.ingress!.traffic!, 
+      customDomains: currentAppProperty.configuration!.ingress!.customDomains! || []
     }
-    if (parameters["ingress-traffic-json"] == undefined) {
+    if (ingresConfig.traffic == undefined) {
       delete ingresConfig.traffic
     }
 
@@ -72,39 +54,48 @@ async function main() {
       minReplicas: number,
       rules: any[]
     } = {
-      maxReplicas: parameters["scale-max-replicas"],
-      minReplicas: parameters["scale-min-replicas"],
-      rules: parameters["scale-rules-json"]
+      maxReplicas: currentAppProperty.template!.scale!.maxReplicas!, 
+      minReplicas: currentAppProperty.template!.scale!.minReplicas!, 
+      rules: [{
+        "name": 'httpscalingrule',
+        "custom": {
+          "type": 'http',
+          "metadata": {
+            "concurrentRequests": '50'
+          }
+        }
+      }]
     }
 
     let networkConfig: {
       dapr: object,
       ingress?: object
     } = {
-      dapr: daprConfig,
+      dapr: currentAppProperty.configuration!.dapr!,
       ingress: ingresConfig
     }
-    if (parameters["ingress-external"] == false || parameters["ingress-external"] == undefined) {
+    if (ingresConfig.external == false || ingresConfig.external == undefined) {
       delete networkConfig.ingress
     }
 
     // TBD: Find a way to get a value instead of json
-    const containesrConfigFile = fs.readFileSync(taskParams.containersConfigPath, 'utf8');
-    const containersConfig = YAML.parse(containesrConfigFile);
-    let selectedContainerConfig;
-    containersConfig.forEach((containerConfig: any) => {
-      if (containerConfig.name == "acatest1") {
-        selectedContainerConfig = [containerConfig]
+    const containerConfig = [
+      {
+        "name": taskParams.containerAppName,
+        "image": taskParams.imageName
       }
-    });
+    ]
+
+    let currentManagedEnvironmentId = currentAppProperty.managedEnvironmentId!
+    let managedEnvironmentName = currentManagedEnvironmentId.substr(currentManagedEnvironmentId.lastIndexOf('/') + 1);
 
     const containerAppEnvelope: ContainerApp = {
       configuration: networkConfig,
-      location: parameters["location"],
+      location: currentAppProperty.location,
       managedEnvironmentId:
-        `/subscriptions/${taskParams.subscriptionId}/resourceGroups/${taskParams.resourceGroup}/providers/Microsoft.App/managedEnvironments/${parameters["managed-environment-name"]}`,
+      `/subscriptions/${taskParams.subscriptionId}/resourceGroups/${taskParams.resourceGroup}/providers/Microsoft.App/managedEnvironments/${managedEnvironmentName}`,
       template: {
-        containers: selectedContainerConfig,
+        containers: containerConfig,
         scale: scaleConfig
       }
     };
