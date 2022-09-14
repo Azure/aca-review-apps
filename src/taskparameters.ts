@@ -9,10 +9,8 @@ export class TaskParameters {
     // Required basic parameters
     private _resourceGroup: string;
     private _containerAppName: string;
-    private _location: string; 
+    private _imageName: string;
     private _subscriptionId: string;
-    private _managedEnvironmentName: string;
-    private _containersConfigPath: string;
 
     // Optional Dapr parameters
     private _daprEnabled: boolean;
@@ -37,9 +35,7 @@ export class TaskParameters {
         // Required basic parameters
         this._resourceGroup = core.getInput('resource-group', { required: true });
         this._containerAppName = core.getInput('name', { required: true });
-        this._location = core.getInput('location', { required: false });
-        this._managedEnvironmentName = core.getInput('managed-environment-name', { required: false });
-        this._containersConfigPath = core.getInput('containers-config-path', { required: true});
+        this._imageName = core.getInput('image', { required: true });
 
         // Optional Dapr parameters
         this._daprAppPort = parseInt(core.getInput('dapr-app-port', { required: false }));
@@ -77,20 +73,12 @@ export class TaskParameters {
         return this._containerAppName;
     }
 
-    public get location() {
-        return this._location;
+    public get imageName() {
+        return this._imageName;
     }
 
     public get subscriptionId() {
         return this._subscriptionId;
-    }
-
-    public get managedEnvironmentName() {
-        return this._managedEnvironmentName;
-    }
-
-    public get containersConfigPath() {
-        return this._containersConfigPath;
     }
 
     // Optional Dapr parameters
