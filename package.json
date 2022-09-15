@@ -1,5 +1,5 @@
 {
-  "name": "aca-deploy-action",
+  "name": "aca-preview-action",
   "version": "0.0.1",
   "description": "GitHub Action to Deploy to Azure Container Apps",
   "main": "lib/main.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Azure/aca-deploy-action.git"
+    "url": "git+https://github.com/Azure/aca-preview-action.git"
   },
   "engines": {
     "node": "16.13.0",
@@ -19,9 +19,9 @@
   "author": "Yuki Hattori",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Azure/aca-deploy/issues"
+    "url": "https://github.com/Azure/aca-preview/issues"
   },
-  "homepage": "https://github.com/Azure/aca-deploy#readme",
+  "homepage": "https://github.com/Azure/aca-preview#readme",
   "dependencies": {
     "@actions/core": "^1.9.1",
     "@azure/arm-appcontainers": "^1.1.0",
