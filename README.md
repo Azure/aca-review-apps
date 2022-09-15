@@ -31,10 +31,10 @@ For using any credentials like Azure Service Principal in your workflow, add the
       az ad sp create-for-rbac --name "myApp" --role contributor \
                                --scopes /subscriptions/{subscription-id}/resourceGroups/{resource-group} \
                                --sdk-auth
-      
+
       # Replace {subscription-id}, {resource-group} with the subscription, resource group details of the WebApp
       # The command should output a JSON object similar to this:
-  
+
     {
       "clientId": "<GUID>",
       "clientSecret": "<GUID>",
@@ -75,7 +75,7 @@ SAMPLE WORKFLOW WILL BE HERE
 
 ```yaml
 - name: 'Deploy to Azure Container Apps'
-- uses: Azure/aca-deploy@v1
+- uses: Azure/aca-preview@v1
   with:
     resource-group: sample-rg
     name: yuhattor-test
@@ -94,7 +94,7 @@ SAMPLE WORKFLOW WILL BE HERE
 
 ```yaml
 - name: 'Sample yaml pipeline'
-- uses: Azure/aca-deploy@v1
+- uses: Azure/aca-preview@v1
   with:
 
 ```
@@ -103,7 +103,7 @@ SAMPLE WORKFLOW WILL BE HERE
 
 ```yaml
 - name: 'Sample yaml pipeline'
-- uses: Azure/aca-deploy@v1
+- uses: Azure/aca-preview@v1
   with:
 
 ```
@@ -112,7 +112,7 @@ SAMPLE WORKFLOW WILL BE HERE
 
 ```yaml
 - name: 'Sample yaml pipeline'
-- uses: Azure/aca-deploy@v1
+- uses: Azure/aca-preview@v1
   with:
 
 ```
