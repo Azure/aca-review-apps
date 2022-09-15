@@ -98,14 +98,10 @@ async function main() {
       }
     ]
 
-    let currentManagedEnvironmentId = currentAppProperty.managedEnvironmentId!
-    let managedEnvironmentName = currentManagedEnvironmentId.substr(currentManagedEnvironmentId.lastIndexOf('/') + 1);
-
     const containerAppEnvelope: ContainerApp = {
       configuration: networkConfig,
       location: currentAppProperty.location,
-      managedEnvironmentId:
-        `/subscriptions/${taskParams.subscriptionId}/resourceGroups/${taskParams.resourceGroup}/providers/Microsoft.App/managedEnvironments/${managedEnvironmentName}`,
+      managedEnvironmentId: currentAppProperty.managedEnvironmentId,
       template: {
         containers: containerConfig,
         scale: scaleConfig,
