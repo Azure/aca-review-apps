@@ -1,7 +1,5 @@
 import * as core from "@actions/core";
 import * as crypto from "crypto";
-import fs from 'fs'
-import YAML from 'yaml'
 import { ContainerAppsAPIClient, ContainerApp, TrafficWeight } from "@azure/arm-appcontainers";
 import { TokenCredential, DefaultAzureCredential } from "@azure/identity";
 import { AuthorizerFactory } from "azure-actions-webclient/AuthorizerFactory";
