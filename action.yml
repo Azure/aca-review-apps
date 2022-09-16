@@ -1,6 +1,5 @@
 name: 'Deploy to Azure Container App'
-description: 'Deploy Containers to Azure Container App. github.com/Azure/Actions'
-
+description: 'GitHub Action to create a new Container App revision for PR review. github.com/Azure/Actions'
 inputs:
     resource-group:
         description: 'Name of the Resource Group in which the Container App will be created'
@@ -17,10 +16,9 @@ inputs:
     deactivate-revision-mode:
         description: Enable Deactivation-Revision Mode of this action. `true` or `false`. Default value is `false`
         required: false
-
 outputs:
-    container-result:
-        description: 'Sample: Container Result'
+    revision-info:
+        description: 'Revision creation result information'
 branding:
     icon: 'azure-logo.svg'
     color: 'blue'
