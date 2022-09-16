@@ -37,7 +37,7 @@ export class TaskParameters {
         this._resourceGroup = core.getInput('resource-group', { required: true });
         this._containerAppName = core.getInput('name', { required: true });
         this._imageName = core.getInput('image', { required: true });
-        this._revisionNameSuffix = core.getInput('revision-name-suffic', { required: false });
+        this._revisionNameSuffix = core.getInput('revision-name-suffix', { required: false });
 
         // Optional Dapr parameters
         this._daprAppPort = parseInt(core.getInput('dapr-app-port', { required: false }));
