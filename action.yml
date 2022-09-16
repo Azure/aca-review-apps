@@ -13,7 +13,7 @@ inputs:
         required: true
     revision-name-suffix:
         description: Suffixes for New Revision or Target Revision of deactivation. If the `mode` input is `deactivate-revision`, this input needs to be set.
-        required: false
+        required: true
     deactivate-revision-mode:
         description: Enable Deactivation-Revision Mode of this action. `true` or `false`. Default value is `false`
         required: false
