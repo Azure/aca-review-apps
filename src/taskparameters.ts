@@ -1,10 +1,8 @@
 import * as core from '@actions/core';
 import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
-import fs = require('fs');
   
 export class TaskParameters {
     private static taskparams: TaskParameters;
-    private _endpoint: IAuthorizer;
 
     // Required basic parameters
     private _resourceGroup: string;
@@ -32,7 +30,6 @@ export class TaskParameters {
 
     private constructor(endpoint: IAuthorizer) {
 
-        this._endpoint = endpoint;
         this._subscriptionId = endpoint.subscriptionID;
 
         // Required basic parameters
