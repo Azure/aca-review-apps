@@ -12,7 +12,7 @@ inputs:
         description: Name of Container Image. If the `mode` input is `deactivate-revision`, this input is ignored.
         required: true
     revision-name-suffix:
-        description: Suffixes for New Revision
+        description: Suffixes for New Revision or Target Revision of deactivation. If the `mode` input is `deactivate-revision`, this input needs to be set.
         required: false
     mode:
         description: Mode of this action, `deactivate-revision` or `add-revision`. Default value is `add-revision`
