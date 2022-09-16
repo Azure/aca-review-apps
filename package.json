@@ -1,7 +1,7 @@
 {
-  "name": "aca-preview-action",
-  "version": "0.0.1",
-  "description": "GitHub Action to Deploy to Azure Container Apps",
+  "name": "aca-preview",
+  "version": "0.1.0",
+  "description": "GitHub Action to create a new Container App revision for PR review",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Azure/aca-preview-action.git"
+    "url": "git+https://github.com/Azure/aca-preview.git"
   },
   "engines": {
     "node": "16.13.0",

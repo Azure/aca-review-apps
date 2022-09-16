@@ -1,7 +1,7 @@
 {
-  // IntelliSense を使用して利用可能な属性を学べます。
-  // 既存の属性の説明をホバーして表示します。
-  // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
+  // Use IntelliSense to learn about available attributes
+  // Hover over existing attribute descriptions.
+  // For more information, please check the following: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
@@ -22,26 +22,21 @@
         "INPUT_LOCATION": "<REPLACE>",
         "INPUT_NAME": "<REPLACE>",
         "INPUT_MANAGED-ENVIRONMENT-NAME": "<REPLACE>",
-
         // DAPR config
         // "INPUT_DAPR-ENABLED": "<REPLACE>",
         // "INPUT_DAPR-APP-PROTOCOL": "<REPLACE>",
         // "INPUT_DAPR-APP-PORT": "<REPLACE>",
-
         // Ingress config
         // "INPUT_INGRESS-CUSTOM-DOMAINS-JSON": "<REPLACE>",
         // "INPUT_INGRESS-EXTERNAL": "<REPLACE>",
         // "INPUT_INGRESS-TARGET-PORT": "<REPLACE>",
         // "INPUT_INGRESS-TRAFFIC-JSON": "<REPLACE>",
-
         // Scale config
         // "INPUT_SCALE-MIN-REPLICAS": "<REPLACE>",
         // "INPUT_SCALE-MAX-REPLICAS": "<REPLACE>",
         // "INPUT_SCALE-RULES-JSON": "<REPLACE>",
-
         // Containers config
         // "INPUT_CONTAINERS-CONFIG-JSON": "<REPLACE>",
-
         // values for EnvironmentCredential class
         // "AZURE_CLIENT_ID": "<REPLACE>",
         // "AZURE_TENANT_ID": "<REPLACE>",

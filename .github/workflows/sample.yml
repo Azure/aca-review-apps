@@ -1,12 +1,11 @@
 on: [push, pull_request]
   
-name: Container Deployment Sample Workflow
+name: Samlpe GitHub Action to create new revision of Container App
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    # checkout the repo
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@master
 
@@ -28,7 +27,8 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - name: 'Deploy to Azure Container Apps'
+
+    - name: 'Create a new Container App revision'
       uses: ./
       with:
         resource-group: rg-sample

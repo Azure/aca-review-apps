@@ -11,9 +11,6 @@ var prefix = !!process.env.AZURE_HTTP_USER_AGENT ? `${process.env.AZURE_HTTP_USE
 
 async function main() {
 
-// Please refer to this sample code
-// https://github.com/Azure/azure-sdk-for-js/blob/32c07776aa91c302fb2c90ba65e3bb4668b5a792/sdk/appcontainers/arm-appcontainers/samples-dev/containerAppsCreateOrUpdateSample.ts
-
   try {
     // Set user agent variable.
     let usrAgentRepo = crypto.createHash('sha256').update(`${process.env.GITHUB_REPOSITORY}`).digest('hex');
@@ -40,7 +37,6 @@ async function main() {
       });
       return;
     }
-    // TBD: Remove key when there is key without value
 
     let traffics = [];
     currentAppProperty.configuration!.ingress!.traffic!.forEach((traffic: TrafficWeight) => {
@@ -60,20 +56,19 @@ async function main() {
       traffic?: any[],
       customDomains?: any[]
     } = {
-      external: currentAppProperty.configuration!.ingress!.external!, 
-      targetPort: currentAppProperty.configuration!.ingress!.targetPort!, 
+      external: currentAppProperty.configuration!.ingress!.external!,
+      targetPort: currentAppProperty.configuration!.ingress!.targetPort!,
       traffic: traffics,
       customDomains: currentAppProperty.configuration!.ingress!.customDomains! || []
     }
 
-    // TBD: Remove key when there is key without value
     const scaleConfig: {
       maxReplicas: number,
       minReplicas: number,
       rules: any[]
     } = {
-      maxReplicas: currentAppProperty.template!.scale!.maxReplicas!, 
-      minReplicas: currentAppProperty.template!.scale!.minReplicas!, 
+      maxReplicas: currentAppProperty.template!.scale!.maxReplicas!,
+      minReplicas: currentAppProperty.template!.scale!.minReplicas!,
       rules: [{
         "name": 'httpscalingrule',
         "custom": {
@@ -98,7 +93,6 @@ async function main() {
       delete networkConfig.ingress
     }
 
-    // TBD: Find a way to get a value instead of json
     const containerConfig = [
       {
         "name": taskParams.containerAppName,
@@ -129,13 +123,13 @@ async function main() {
       console.log("Deployment Succeeded");
 
       if (ingresConfig.external == true) {
-        let appUrl = "http://"+containerAppDeploymentResult.latestRevisionFqdn+"/"
+        let appUrl = "http://" + containerAppDeploymentResult.latestRevisionFqdn + "/"
         core.setOutput("app-url", appUrl);
-        console.log("Your App has been deployed at: "+appUrl);
+        console.log("Your App has been deployed at: " + appUrl);
       }
     } else {
-      core.debug("Deployment Result: "+containerAppDeploymentResult);
-      throw Error("Container Deployment Failed"+containerAppDeploymentResult);
+      core.debug("Deployment Result: " + containerAppDeploymentResult);
+      throw Error("Container Deployment Failed" + containerAppDeploymentResult);
     }
   }
   catch (error: string | any) {
@@ -149,7 +143,7 @@ async function main() {
 }
 
 async function deactivateRevision(params: any) {
-  const { client, resourceGroup, containerAppName, traffic, revisionName} = params;
+  const { client, resourceGroup, containerAppName, traffic, revisionName } = params;
   const targetRevisions = traffic.filter((r: any) => r.revisionName === revisionName);
 
   // Check traffic weight of the target revision
