@@ -9,8 +9,14 @@ inputs:
         description: 'TBD: Name of the Container Group Instance - this should be aquired with cred automatically'
         required: true
     image:
-        description: Name of Container Image
+        description: Name of Container Image. If the `mode` input is `deactivate-revision`, this input is ignored.
         required: true
+    revision-name-suffix:
+        description: Suffixes for New Revision or Target Revision of deactivation. If the `mode` input is `deactivate-revision`, this input needs to be set.
+        required: true
+    deactivate-revision-mode:
+        description: Enable Deactivation-Revision Mode of this action. `true` or `false`. Default value is `false`
+        required: false
 
 outputs:
     container-result:

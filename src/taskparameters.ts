@@ -1,15 +1,14 @@
 import * as core from '@actions/core';
 import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
-import fs = require('fs');
   
 export class TaskParameters {
     private static taskparams: TaskParameters;
-    private _endpoint: IAuthorizer;
 
     // Required basic parameters
     private _resourceGroup: string;
     private _containerAppName: string;
     private _imageName: string;
+    private _revisionNameSuffix: string;
     private _subscriptionId: string;
 
     // Optional Dapr parameters
@@ -26,16 +25,18 @@ export class TaskParameters {
     private _scaleMaxReplicas: number;
     private _scaleMinReplicas: number;
 
+    // Optional mode parameter
+    private _deactivateRevisionMode: boolean;
 
     private constructor(endpoint: IAuthorizer) {
 
-        this._endpoint = endpoint;
         this._subscriptionId = endpoint.subscriptionID;
 
         // Required basic parameters
         this._resourceGroup = core.getInput('resource-group', { required: true });
         this._containerAppName = core.getInput('name', { required: true });
         this._imageName = core.getInput('image', { required: true });
+        this._revisionNameSuffix = core.getInput('revision-name-suffix', { required: false });
 
         // Optional Dapr parameters
         this._daprAppPort = parseInt(core.getInput('dapr-app-port', { required: false }));
@@ -51,6 +52,9 @@ export class TaskParameters {
         // Optional scale parameters
         this._scaleMaxReplicas = parseInt(core.getInput('scale-max-replicas', { required: false }));
         this._scaleMinReplicas = parseInt(core.getInput('scale-min-replicas', { required: false }));
+
+        // Optional mode parameter
+        this._deactivateRevisionMode = core.getInput('deactivate-revision-mode', { required: false }) == "true";
     }
 
     // JSON Validation
@@ -75,6 +79,10 @@ export class TaskParameters {
 
     public get imageName() {
         return this._imageName;
+    }
+
+    public get revisionNameSuffix() {
+        return this._revisionNameSuffix;
     }
 
     public get subscriptionId() {
@@ -114,5 +122,9 @@ export class TaskParameters {
 
     public get scaleMinReplicas(){
         return this._scaleMinReplicas;
+    }
+
+    public get deactivateRevisionMode() {
+        return this._deactivateRevisionMode;
     }
 }
