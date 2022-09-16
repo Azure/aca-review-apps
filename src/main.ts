@@ -4,7 +4,6 @@ import { ContainerAppsAPIClient, ContainerApp, TrafficWeight } from "@azure/arm-
 import { TokenCredential, DefaultAzureCredential } from "@azure/identity";
 import { AuthorizerFactory } from "azure-actions-webclient/AuthorizerFactory";
 import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
-import { Constants } from './constants';
 
 import { TaskParameters } from "./taskparameters";
 

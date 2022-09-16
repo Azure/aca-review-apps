@@ -1,7 +1,6 @@
 import * as core from '@actions/core';
 import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
 import fs = require('fs');
-import { Constants } from './constants';
   
 export class TaskParameters {
     private static taskparams: TaskParameters;
