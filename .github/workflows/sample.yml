@@ -31,7 +31,7 @@ jobs:
     - name: 'Deploy to Azure Container Apps'
       uses: ./
       with:
-        resource-group: rg-hoge
-        name: ctapp-hoge
+        resource-group: rg-sample
+        name: ctapp-sample
         image: mcr.microsoft.com/azuredocs/containerapps-helloworld:latest
         revision-name-suffix: ${{ github.sha }}
