@@ -14,6 +14,9 @@ inputs:
     revision-name-suffix:
         description: Suffixes for New Revision
         required: false
+    mode:
+        description: Mode of this action
+        required: false # Default is adding revision mode
 
 outputs:
     container-result:
