@@ -47,7 +47,7 @@ async function main() {
 
     let traffics = [];
     currentAppProperty.configuration!.ingress!.traffic!.forEach((traffic: TrafficWeight) => {
-      if (traffic.weight > 0) {
+      if (traffic.weight && traffic.weight > 0) {
         traffics.push(traffic);
       }
     });
