@@ -11,9 +11,6 @@ inputs:
     image:
         description: Name of Container Image
         required: true
-    commit-hash:
-        description: Commit Hash
-        required: true
 
 outputs:
     container-result:
