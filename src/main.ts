@@ -6,6 +6,7 @@ import { ContainerAppsAPIClient, ContainerApp, TrafficWeight } from "@azure/arm-
 import { TokenCredential, DefaultAzureCredential } from "@azure/identity";
 import { AuthorizerFactory } from "azure-actions-webclient/AuthorizerFactory";
 import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
+import { Constants } from './constants';
 
 import { TaskParameters } from "./taskparameters";
 
@@ -32,6 +33,16 @@ async function main() {
 
     const currentAppProperty = await client.containerApps.get(taskParams.resourceGroup, taskParams.containerAppName);
 
+    if (taskParams.mode === Constants.MODE_DEACTIVE_REVISION) {
+      await deactivateRevision({
+        client,
+        resourceGroup: taskParams.resourceGroup,
+        containerAppName: taskParams.containerAppName,
+        traffic: currentAppProperty.configuration?.ingress?.traffic || [],
+        revisionName: `${taskParams.containerAppName}--${taskParams.revisionNameSuffix}`,
+      });
+      return;
+    }
     // TBD: Remove key when there is key without value
 
     let traffics = [];
@@ -138,6 +149,19 @@ async function main() {
     // Reset AZURE_HTTP_USER_AGENT.
     core.exportVariable('AZURE_HTTP_USER_AGENT', prefix);
   }
+}
+
+async function deactivateRevision(params: any) {
+  const { client, resourceGroup, containerAppName, traffic, revisionName} = params;
+  const targetRevisions = traffic.filter((r: any) => r.revisionName === revisionName);
+
+  // Check traffic weight of the target revision
+  if (targetRevisions.length > 0 && targetRevisions.reduce((prev: number, curr: any) => prev + curr.weight, 0) !== 0)
+    throw new Error(`Traffic weight of revision ${revisionName} under container app ${containerAppName} is not 0. Set 0 to the traffic weight of the revision.`);
+
+  console.log("Deactivation Step Started");
+  await client.containerAppsRevisions.deactivateRevision(resourceGroup, containerAppName, revisionName);
+  console.log("Deactivation Step Succeeded");
 }
 
 main();

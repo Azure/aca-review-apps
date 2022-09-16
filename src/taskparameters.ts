@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
 import fs = require('fs');
+import { Constants } from './constants';
   
 export class TaskParameters {
     private static taskparams: TaskParameters;
@@ -27,6 +28,8 @@ export class TaskParameters {
     private _scaleMaxReplicas: number;
     private _scaleMinReplicas: number;
 
+    // Optional mode parameter
+    private _mode: string;
 
     private constructor(endpoint: IAuthorizer) {
 
@@ -53,6 +56,9 @@ export class TaskParameters {
         // Optional scale parameters
         this._scaleMaxReplicas = parseInt(core.getInput('scale-max-replicas', { required: false }));
         this._scaleMinReplicas = parseInt(core.getInput('scale-min-replicas', { required: false }));
+
+        // Optional mode parameter
+        this._mode = core.getInput('mode', {required: false}) === Constants.MODE_DEACTIVE_REVISION ? Constants.MODE_DEACTIVE_REVISION : Constants.MODE_ADD_REVISION;
     }
 
     // JSON Validation
@@ -120,5 +126,9 @@ export class TaskParameters {
 
     public get scaleMinReplicas(){
         return this._scaleMinReplicas;
+    }
+
+    public get mode() {
+        return this._mode;
     }
 }
