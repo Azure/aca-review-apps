@@ -29,7 +29,7 @@ export class TaskParameters {
     private _scaleMinReplicas: number;
 
     // Optional mode parameter
-    private _mode: string;
+    private _deactivateRevisionMode: boolean;
 
     private constructor(endpoint: IAuthorizer) {
 
@@ -58,7 +58,7 @@ export class TaskParameters {
         this._scaleMinReplicas = parseInt(core.getInput('scale-min-replicas', { required: false }));
 
         // Optional mode parameter
-        this._mode = core.getInput('mode', {required: false}) === Constants.MODE_DEACTIVE_REVISION ? Constants.MODE_DEACTIVE_REVISION : Constants.MODE_ADD_REVISION;
+        this._deactivateRevisionMode = core.getInput('deactivate-revision-mode', { required: false }) == "true";
     }
 
     // JSON Validation
@@ -128,7 +128,7 @@ export class TaskParameters {
         return this._scaleMinReplicas;
     }
 
-    public get mode() {
-        return this._mode;
+    public get deactivateRevisionMode() {
+        return this._deactivateRevisionMode;
     }
 }

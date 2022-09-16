@@ -33,7 +33,7 @@ async function main() {
 
     const currentAppProperty = await client.containerApps.get(taskParams.resourceGroup, taskParams.containerAppName);
 
-    if (taskParams.mode === Constants.MODE_DEACTIVE_REVISION) {
+    if (taskParams.deactivateRevisionMode) {
       await deactivateRevision({
         client,
         resourceGroup: taskParams.resourceGroup,
@@ -157,7 +157,7 @@ async function deactivateRevision(params: any) {
 
   // Check traffic weight of the target revision
   if (targetRevisions.length > 0 && targetRevisions.reduce((prev: number, curr: any) => prev + curr.weight, 0) !== 0)
-    throw new Error(`Traffic weight of revision ${revisionName} under container app ${containerAppName} is not 0. Set 0 to the traffic weight of the revision.`);
+    throw new Error(`Traffic weight of revision ${revisionName} under container app ${containerAppName} is not 0. Set 0 to the traffic weight of the revision before deactivation.`);
 
   console.log("Deactivation Step Started");
   await client.containerAppsRevisions.deactivateRevision(resourceGroup, containerAppName, revisionName);
