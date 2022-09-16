@@ -11,6 +11,9 @@ inputs:
     image:
         description: Name of Container Image
         required: true
+    revision-name-suffix:
+        description: Suffixes for New Revision
+        required: false
 
 outputs:
     container-result:
