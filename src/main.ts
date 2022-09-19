@@ -20,7 +20,9 @@ async function main() {
 
     let endpoint: IAuthorizer = await AuthorizerFactory.getAuthorizer();
     var taskParams = TaskParameters.getTaskParams(endpoint);
-    let credential: TokenCredential = new DefaultAzureCredential()
+    let credential: TokenCredential = new DefaultAzureCredential();
+    const revisionName = `${taskParams.containerAppName}--${taskParams.revisionNameSuffix}`;
+    if (revisionName.length > 64) throw new Error(`The total length of revision name ${revisionName} is ${revisionName.length}. This must be less than 64.`);
 
     console.log("Predeployment Steps Started");
     const client = new ContainerAppsAPIClient(credential, taskParams.subscriptionId);
