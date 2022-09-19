@@ -121,17 +121,15 @@ async function main() {
     );
 
     // check if added revision is included in revision list
-    const revisionList = await client.containerAppsRevisions.listRevisions(taskParams.resourceGroup, taskParams.containerAppName);
-    const addedRevision: Revision | undefined = await (async (list: AsyncIterableIterator<Revision>) => {
-      for await (const revision of list) {
-        if (revision.name === `${taskParams.containerAppName}--${taskParams.revisionNameSuffix}`) {
+    const addedRevision: Revision | undefined = await (async (targetRevisionName) => {
+      const revisionList = await client.containerAppsRevisions.listRevisions(taskParams.resourceGroup, taskParams.containerAppName);
+      for await (const revision of revisionList) {
+        if (revision.name === targetRevisionName) {
           return revision;
         }
       }
-    })(revisionList);
-    if (!addedRevision) {
-      throw new Error(`Failed to add revision ${taskParams.containerAppName}--${taskParams.revisionNameSuffix}.`);
-    }
+    })(`${taskParams.containerAppName}--${taskParams.revisionNameSuffix}`);
+    if (!addedRevision) throw new Error(`Failed to add revision ${taskParams.containerAppName}--${taskParams.revisionNameSuffix}.`);
 
     if (ingresConfig.external == true && addedRevision.fqdn) {
       let appUrl = "https://" + addedRevision.fqdn + "/"
