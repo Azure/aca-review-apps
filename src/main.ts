@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as crypto from "crypto";
-import { ContainerAppsAPIClient, ContainerApp, TrafficWeight } from "@azure/arm-appcontainers";
+import { ContainerAppsAPIClient, ContainerApp, TrafficWeight, Revision } from "@azure/arm-appcontainers";
 import { TokenCredential, DefaultAzureCredential } from "@azure/identity";
 import { AuthorizerFactory } from "azure-actions-webclient/AuthorizerFactory";
 import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
@@ -113,24 +113,32 @@ async function main() {
 
     console.log("Deployment Step Started");
 
-    let containerAppDeploymentResult = await client.containerApps.beginCreateOrUpdateAndWait(
+    // update
+    await client.containerApps.beginUpdateAndWait(
       taskParams.resourceGroup,
       taskParams.containerAppName,
       containerAppEnvelope,
     );
 
-    if (containerAppDeploymentResult.provisioningState == "Succeeded") {
-      console.log("Deployment Succeeded");
-
-      if (ingresConfig.external == true) {
-        let appUrl = "http://" + containerAppDeploymentResult.latestRevisionFqdn + "/"
-        core.setOutput("app-url", appUrl);
-        console.log("Your App has been deployed at: " + appUrl);
+    // check if added revision is included in revision list
+    const revisionList = await client.containerAppsRevisions.listRevisions(taskParams.resourceGroup, taskParams.containerAppName);
+    const addedRevision: Revision | undefined = await (async (list: AsyncIterableIterator<Revision>) => {
+      for await (const revision of list) {
+        if (revision.name === `${taskParams.containerAppName}--${taskParams.revisionNameSuffix}`) {
+          return revision;
+        }
       }
-    } else {
-      core.debug("Deployment Result: " + containerAppDeploymentResult);
-      throw Error("Container Deployment Failed" + containerAppDeploymentResult);
+    })(revisionList);
+    if (!addedRevision) {
+      throw new Error(`Failed to add revision ${taskParams.containerAppName}--${taskParams.revisionNameSuffix}.`);
     }
+
+    if (ingresConfig.external == true && addedRevision.fqdn) {
+      let appUrl = "https://" + addedRevision.fqdn + "/"
+      core.setOutput("app-url", appUrl);
+      console.log("Your App has been deployed at: " + appUrl);
+    }
+    console.log("Deployment Succeeded");
   }
   catch (error: string | any) {
     console.log("Deployment Failed with Error: " + error);
