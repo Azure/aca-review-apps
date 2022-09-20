@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as crypto from "crypto";
-import { ContainerAppsAPIClient, ContainerApp, TrafficWeight } from "@azure/arm-appcontainers";
+import { ContainerAppsAPIClient, ContainerApp, TrafficWeight, Revision } from "@azure/arm-appcontainers";
 import { TokenCredential, DefaultAzureCredential } from "@azure/identity";
 import { AuthorizerFactory } from "azure-actions-webclient/AuthorizerFactory";
 import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
@@ -119,24 +119,27 @@ async function main() {
 
     console.log("Deployment Step Started");
 
-    let containerAppDeploymentResult = await client.containerApps.beginCreateOrUpdateAndWait(
+    // update
+    await client.containerApps.beginUpdateAndWait(
       taskParams.resourceGroup,
       taskParams.containerAppName,
       containerAppEnvelope,
     );
 
-    if (containerAppDeploymentResult.provisioningState == "Succeeded") {
-      console.log("Deployment Succeeded");
+    // check if added revision is included in revision list
+    const addedRevision = await client.containerAppsRevisions.getRevision(
+      taskParams.resourceGroup,
+      taskParams.containerAppName,
+      `${taskParams.containerAppName}--${taskParams.revisionNameSuffix}`
+    )
+    if (!addedRevision) throw new Error(`Failed to add revision ${taskParams.containerAppName}--${taskParams.revisionNameSuffix}.`);
 
-      if (ingresConfig.external == true) {
-        let appUrl = "http://" + containerAppDeploymentResult.latestRevisionFqdn + "/"
-        core.setOutput("app-url", appUrl);
-        console.log("Your App has been deployed at: " + appUrl);
-      }
-    } else {
-      core.debug("Deployment Result: " + containerAppDeploymentResult);
-      throw Error("Container Deployment Failed" + containerAppDeploymentResult);
+    if (ingresConfig.external == true && addedRevision.fqdn) {
+      let appUrl = "https://" + addedRevision.fqdn + "/"
+      core.setOutput("app-url", appUrl);
+      console.log("Your App has been deployed at: " + appUrl);
     }
+    console.log("Deployment Succeeded");
   }
   catch (error: string | any) {
     console.log("Deployment Failed with Error: " + error);
