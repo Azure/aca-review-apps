@@ -38,12 +38,14 @@ async function main() {
       return;
     }
 
-    let traffics = [];
-    currentAppProperty.configuration!.ingress!.traffic!.forEach((traffic: TrafficWeight) => {
-      if (traffic.weight && traffic.weight > 0) {
-        traffics.push(traffic);
+    const traffics = currentAppProperty.configuration!.ingress!.traffic!.filter((traffic: TrafficWeight) => {
+      if (!traffic.weight || traffic.weight === 0) return false
+      if (traffic.latestRevision) {
+        traffic.latestRevision = false;
+        traffic.revisionName = currentAppProperty.latestRevisionName;
       }
-    });
+      return true;
+    }) || [];
     traffics.push({
       revisionName: `${taskParams.containerAppName}--${taskParams.revisionNameSuffix}`,
       weight: 0,
