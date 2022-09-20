@@ -121,14 +121,11 @@ async function main() {
     );
 
     // check if added revision is included in revision list
-    const addedRevision: Revision | undefined = await (async (targetRevisionName) => {
-      const revisionList = await client.containerAppsRevisions.listRevisions(taskParams.resourceGroup, taskParams.containerAppName);
-      for await (const revision of revisionList) {
-        if (revision.name === targetRevisionName) {
-          return revision;
-        }
-      }
-    })(`${taskParams.containerAppName}--${taskParams.revisionNameSuffix}`);
+    const addedRevision = await client.containerAppsRevisions.getRevision(
+      taskParams.resourceGroup,
+      taskParams.containerAppName,
+      `${taskParams.containerAppName}--${taskParams.revisionNameSuffix}`
+    )
     if (!addedRevision) throw new Error(`Failed to add revision ${taskParams.containerAppName}--${taskParams.revisionNameSuffix}.`);
 
     if (ingresConfig.external == true && addedRevision.fqdn) {
