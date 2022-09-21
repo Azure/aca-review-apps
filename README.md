@@ -2,13 +2,12 @@
 
 [GitHub Actions](https://help.github.com/en/articles/about-github-actions) provides the flexibility to build automated workflows for the software development lifecycle.
 
-GitHub Actions can be used to automate the workflow of deploying to [Azure Container App](https://azure.microsoft.com/en-us/services/container-apps/).
+GitHub Actions can be used to automate the workflow of creating a new revision of [Azure Container App](https://azure.microsoft.com/en-us/services/container-apps/).
+The aca-review-app runs the code contained in the GitHub pull request as an app in the Container App. The review app is then created as a new revision with a Weight of 0, each with a unique URL that can be shared. This is a great way to review and test code changes.
+
+Review apps can also be configured to launch automatically with each pull request. Also, when combined with `peter-evans/create-or-update-comment@v2` or similar, you can not only create a revision, but also comment the URL of the created Revision in the Pull Request.
 
 Let's get started today with a [free Azure account](https://azure.com/free/open-source)!
-
-This repository contains to deploy to Azure Container App. It supports deploying your container image to an Azure Container App.
-
-This repository contains the [GitHub Action for Deploying to Azure Container App](./action.yml).
 
 The definition of this GitHub Action is in [action.yml](./action.yml).
 
