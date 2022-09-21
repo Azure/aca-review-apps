@@ -42,7 +42,7 @@ async function main() {
       return;
     }
 
-    let traffics = currentAppProperty.configuration!.ingress!.traffic!.filter((traffic: TrafficWeight) => {
+    const traffics = currentAppProperty.configuration!.ingress!.traffic!.filter((traffic: TrafficWeight) => {
       if (!traffic.weight || traffic.weight === 0) return false
       if (traffic.latestRevision) {
         traffic.latestRevision = false;
@@ -86,7 +86,7 @@ async function main() {
       }]
     }
 
-    let networkConfig: {
+    const networkConfig: {
       dapr: object,
       ingress?: object,
       activeRevisionsMode?: string
