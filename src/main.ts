@@ -42,7 +42,7 @@ async function main() {
       return;
     }
 
-    const traffics = currentAppProperty.configuration!.ingress!.traffic!.filter((traffic: TrafficWeight) => {
+    let traffics = currentAppProperty.configuration!.ingress!.traffic!.filter((traffic: TrafficWeight) => {
       if (!traffic.weight || traffic.weight === 0) return false
       if (traffic.latestRevision) {
         traffic.latestRevision = false;
