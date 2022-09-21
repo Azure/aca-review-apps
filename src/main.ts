@@ -169,7 +169,7 @@ async function deactivateRevision(params: any) {
     revisionName
   )
   if(deactiveRevision.active) {
-    console.log("Deactivation Step Error");
+    throw new Error(`The revision ${revisionName} under container app ${containerAppName} can't be deactivated. Check the Azure Portal for details.`);
   } else {
     console.log("Deactivation Step Succeeded");
   }
