@@ -46,7 +46,7 @@ export class TaskParameters {
         // Optional ingress parameters
         this._ingressExternal = core.getInput('ingress-external', { required: false }) == "true";
         this._ingressTargetPort = parseInt(core.getInput('ingress-target-port', { required: false }));
-        let ingressTrafficJsonString = core.getInput('ingress-traffic-json', { required: false });
+        const ingressTrafficJsonString = core.getInput('ingress-traffic-json', { required: false });
         this._ingressTraffic = ingressTrafficJsonString == "" ? [] : JSON.parse(ingressTrafficJsonString)
 
         // Optional scale parameters

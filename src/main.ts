@@ -7,20 +7,20 @@ import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
 
 import { TaskParameters } from "./taskparameters";
 
-var prefix = !!process.env.AZURE_HTTP_USER_AGENT ? `${process.env.AZURE_HTTP_USER_AGENT}` : "";
+const prefix = !!process.env.AZURE_HTTP_USER_AGENT ? `${process.env.AZURE_HTTP_USER_AGENT}` : "";
 
 async function main() {
 
   try {
     // Set user agent variable.
-    let usrAgentRepo = crypto.createHash('sha256').update(`${process.env.GITHUB_REPOSITORY}`).digest('hex');
-    let actionName = 'DeployAzureContainerApp';
-    let userAgentString = (!!prefix ? `${prefix}+` : '') + `GITHUBACTIONS_${actionName}_${usrAgentRepo}`;
+    const usrAgentRepo = crypto.createHash('sha256').update(`${process.env.GITHUB_REPOSITORY}`).digest('hex');
+    const actionName = 'ACAReviewApps';
+    const userAgentString = (!!prefix ? `${prefix}+` : '') + `GITHUBACTIONS_${actionName}_${usrAgentRepo}`;
     core.exportVariable('AZURE_HTTP_USER_AGENT', userAgentString);
 
-    let endpoint: IAuthorizer = await AuthorizerFactory.getAuthorizer();
-    var taskParams = TaskParameters.getTaskParams(endpoint);
-    let credential: TokenCredential = new DefaultAzureCredential();
+    const endpoint: IAuthorizer = await AuthorizerFactory.getAuthorizer();
+    const taskParams = TaskParameters.getTaskParams(endpoint);
+    const credential: TokenCredential = new DefaultAzureCredential();
     // The revision name format is described in this documentation
     // https://learn.microsoft.com/en-us/azure/container-apps/revisions#revision-name-suffix
     const revisionName = `${taskParams.containerAppName}--${taskParams.revisionNameSuffix}`;
@@ -135,7 +135,7 @@ async function main() {
     if (!addedRevision) throw new Error(`Failed to add revision ${taskParams.containerAppName}--${taskParams.revisionNameSuffix}.`);
 
     if (ingresConfig.external == true && addedRevision.fqdn) {
-      let appUrl = "https://" + addedRevision.fqdn + "/"
+      const appUrl = "https://" + addedRevision.fqdn + "/"
       core.setOutput("app-url", appUrl);
       console.log("Your App has been deployed at: " + appUrl);
     }
