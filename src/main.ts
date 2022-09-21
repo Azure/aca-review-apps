@@ -86,7 +86,7 @@ async function main() {
       }]
     }
 
-    let networkConfig: {
+    const networkConfig: {
       dapr: object,
       ingress?: object,
       activeRevisionsMode?: string
