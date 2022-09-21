@@ -1,5 +1,5 @@
 {
-  "name": "aca-preview",
+  "name": "aca-review-apps",
   "version": "0.1.0",
   "description": "GitHub Action to create a new Container App revision for PR review",
   "main": "lib/main.js",
@@ -19,9 +19,9 @@
   "author": "Yuki Hattori",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Azure/aca-preview/issues"
+    "url": "https://github.com/Azure/aca-review-apps/issues"
   },
-  "homepage": "https://github.com/Azure/aca-preview#readme",
+  "homepage": "https://github.com/Azure/aca-review-apps#readme",
   "dependencies": {
     "@actions/core": "^1.9.1",
     "@azure/arm-appcontainers": "^1.1.0",
