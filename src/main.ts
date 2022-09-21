@@ -56,7 +56,7 @@ async function main() {
       latestRevision: false
     })
 
-    const ingresConfig: {
+    const ingressConfig: {
       external: boolean,
       targetPort?: number,
       traffic?: any[],
@@ -92,10 +92,10 @@ async function main() {
       activeRevisionsMode?: string
     } = {
       dapr: currentAppProperty.configuration!.dapr!,
-      ingress: ingresConfig,
+      ingress: ingressConfig,
       activeRevisionsMode: "Multiple"
     }
-    if (ingresConfig.external == false || ingresConfig.external == undefined) {
+    if (ingressConfig.external == false || ingressConfig.external == undefined) {
       delete networkConfig.ingress
     }
 
@@ -134,7 +134,7 @@ async function main() {
     )
     if (!addedRevision) throw new Error(`Failed to add revision ${taskParams.containerAppName}--${taskParams.revisionNameSuffix}.`);
 
-    if (ingresConfig.external == true && addedRevision.fqdn) {
+    if (ingressConfig.external == true && addedRevision.fqdn) {
       const appUrl = "https://" + addedRevision.fqdn + "/"
       core.setOutput("app-url", appUrl);
       console.log("Your App has been deployed at: " + appUrl);
