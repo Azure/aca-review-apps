@@ -158,10 +158,21 @@ async function deactivateRevision(params: any) {
   // Check traffic weight of the target revision
   if (targetRevisions.length > 0 && targetRevisions.reduce((prev: number, curr: any) => prev + curr.weight, 0) !== 0)
     throw new Error(`Traffic weight of revision ${revisionName} under container app ${containerAppName} is not 0. Set 0 to the traffic weight of the revision before deactivation.`);
-
+ 　　
   console.log("Deactivation Step Started");
   await client.containerAppsRevisions.deactivateRevision(resourceGroup, containerAppName, revisionName);
-  console.log("Deactivation Step Succeeded");
+  
+  // check if revision's status is deactived
+  const deactiveRevision = await client.containerAppsRevisions.getRevision(
+    resourceGroup,
+    containerAppName,
+    revisionName
+  )
+  if(deactiveRevision.active) {
+    throw new Error(`The revision ${revisionName} under container app ${containerAppName} can't be deactivated. Check the Azure Portal for details.`);
+  } else {
+    console.log("Deactivation Step Succeeded");
+  }
 }
 
 main();
