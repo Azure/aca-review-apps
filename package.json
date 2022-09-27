@@ -1,6 +1,6 @@
 {
   "name": "aca-review-apps",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "GitHub Action to create a new Container App revision for PR review",
   "main": "lib/main.js",
   "scripts": {
