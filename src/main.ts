@@ -8,6 +8,7 @@ import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
 import { TaskParameters } from "./taskparameters";
 
 const prefix = !!process.env.AZURE_HTTP_USER_AGENT ? `${process.env.AZURE_HTTP_USER_AGENT}` : "";
+const MAX_REVISION_NAME_LENGTH = 63;
 
 async function main() {
 
@@ -24,7 +25,7 @@ async function main() {
     // The revision name format is described in this documentation
     // https://learn.microsoft.com/en-us/azure/container-apps/revisions#revision-name-suffix
     const revisionName = `${taskParams.containerAppName}--${taskParams.revisionNameSuffix}`;
-    if (revisionName.length > 64) throw new Error(`The total length of revision name ${revisionName} is ${revisionName.length}. This must be less than 64.`);
+    if (revisionName.length > MAX_REVISION_NAME_LENGTH) throw new Error(`The total length of revision name ${revisionName} is ${revisionName.length}. This must be less than 64.`);
 
     console.log("Predeployment Steps Started");
     const client = new ContainerAppsAPIClient(credential, taskParams.subscriptionId);
