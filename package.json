@@ -1,6 +1,6 @@
 {
   "name": "aca-review-apps",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "GitHub Action to create a new Container App revision for PR review",
   "main": "lib/main.js",
   "scripts": {
@@ -16,7 +16,30 @@
     "node": "16.13.0",
     "npm": "8.1.0"
   },
-  "author": "Yuki Hattori",
+  "author": {
+    "name": "Yuki Hattori",
+    "email": "mail@hattori.dev",
+    "url": "https://hattori.dev"
+  },
+  "contributors": [
+    {
+      "name": "Hirofumi Horikawa",
+      "url": "https://github.com/horihiro"
+    },
+    {
+      "name": "Kodai Sakabe",
+      "url": "https://koudaiii.com",
+      "email": "cs006061@gmail.com"
+    },
+    {
+      "name": "Kyokutou In",
+      "url": "https://github.com/k-in"
+    },
+    {
+      "name": "Ryosuke Hyakuta",
+      "url": "https://github.com/ry0y4n"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Azure/aca-review-apps/issues"
