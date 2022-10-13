@@ -5,6 +5,8 @@
 **aca-review-app** can be used to automate the workflow of creating a new revision of [Azure Container App](https://azure.microsoft.com/en-us/services/container-apps/) for review.
 This action runs the code contained in the GitHub pull request as an app in the Container App. The review application is then created as a new revision with a Weight of 0, each with a unique URL that can be shared. This is a great way to review and test code changes. This action allows deactivating an app for review that has been created, triggered by the close of a pull request.
 
+<img width="640" alt="image" src="https://user-images.githubusercontent.com/15963767/195657236-54a6af81-61a2-4638-81c9-5e2313ddd6ed.png">
+
 **aca-review-app** can also be configured to launch automatically with each pull request. By integrating with other github actions, it is also possible not only to create revisions, but also to comment the URL of the created revision in a pull request. For more information, please refer to the [eample workflow](./example/).
 
 Let's get started today with a [free Azure account](https://azure.com/free/open-source)!
