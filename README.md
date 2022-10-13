@@ -2,16 +2,18 @@
 
 [GitHub Actions](https://help.github.com/en/articles/about-github-actions) provides the flexibility to build automated workflows for the software development lifecycle.
 
-GitHub Actions can be used to automate the workflow of creating a new revision of [Azure Container App](https://azure.microsoft.com/en-us/services/container-apps/).
-The aca-review-app runs the code contained in the GitHub pull request as an app in the Container App. The review app is then created as a new revision with a Weight of 0, each with a unique URL that can be shared. This is a great way to review and test code changes.
+**aca-review-app** can be used to automate the workflow of creating a new revision of [Azure Container App](https://azure.microsoft.com/en-us/services/container-apps/) for review.
+This action runs the code contained in the GitHub pull request as an app in the Container App. The review application is then created as a new revision with a Weight of 0, each with a unique URL that can be shared. This is a great way to review and test code changes. This action allows deactivating an app for review that has been created, triggered by the close of a pull request.
 
-Review apps can also be configured to launch automatically with each pull request. Also, when combined with `peter-evans/create-or-update-comment@v2` or similar, you can not only create a revision, but also comment the URL of the created Revision in the Pull Request.
+**aca-review-app** can also be configured to launch automatically with each pull request. By integrating with other github actions, it is also possible not only to create revisions, but also to comment the URL of the created revision in a pull request. For more information, please refer to the [eample workflow](./example/).
 
 Let's get started today with a [free Azure account](https://azure.com/free/open-source)!
 
 The definition of this GitHub Action is in [action.yml](./action.yml).
 
 ## End-to-End Sample Workflows
+
+The **[```example/```](./example/)** in this repository contains a sample project to get started. Please read the hands-on documentation and start building.
 
 ### Dependencies on other GitHub Actions
 
@@ -55,98 +57,65 @@ For using any credentials like Azure Service Principal in your workflow, add the
 
 1. Now in the workflow file in your branch: `.github/workflows/workflow.yml` replace the secret in Azure login action with your secret (Refer to the example below)
 
-### Build and Deploy a Node.JS App to Azure Container App
+### Integration to leave comments on Pull Request
+
+#### Sample Snipet for the Review Revision Creation
+
+You can pass the app URL for review to subsequent actions as follows.
 
 ```yaml
-
-on: [push]
-name: Linux_Container_Workflow
-
-SAMPLE WORKFLOW WILL BE HERE
-
-```
-
-### Example YAML Snippets
-
-#### Basic sample to create a revision
-
-```yaml
-on: [push, pull_request]
-name: Preview Deployment
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    env:
-      RESOURCE_GROUP: <YOUR_RESOURCE_GROUP_NAME>
-      CONTAINER_APP_NAME: <YOUR_CONTAINER_APP_NAME>
-      DOCKER_IMAGE_NAME: <YOUR_DOCKER_IMAGE_NAME>
-      # REVISION_NAME_SUFFIX: <YOUR_REVISION_NAME_SUFFIX> # Optional: Default is github commit hash
-    steps:
-    - name: 'Checkout GitHub Action'
-      uses: actions/checkout@master
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - name: 'Create a new Container App revision'
-      uses: azure/aca-preview@v0.1
-      with:
-        resource-group: ${{ env.RESOURCE_GROUP }}
-        name: ${{ env.CONTAINER_APP_NAME }}
-        image: ${{ env.DOCKER_IMAGE_NAME }}
-```
-
-##### Using customize suffice instead of git commit hash
-
-```yaml
-- name: 'Create a new Container App revision'
-  uses: azure/aca-preview@v0.1
+- name: Add revision to ACA
+  uses: Azure/aca-review-apps@v0.2.0
+  id: aca_new_revision
   with:
-    resource-group: ${{ env.RESOURCE_GROUP }}
-    name: ${{ env.CONTAINER_APP_NAME }}
-    image: ${{ env.DOCKER_IMAGE_NAME }}
-    revision-name-suffix: ${{ env.REVISION_NAME_SUFFIX }} 
+    resource-group: <YOUR_RESOURCE_GROUP>
+    name: <YOUR_CONTAINER_APP_NAME>
+    revision-name-suffix: <SHORT_HASH>
+    image: <YOUR_CONTAINER_IMAGE>
+
+- name: add new comment to PR
+  uses: peter-evans/create-or-update-comment@v2
   with:
+    issue-number: ${{ github.event.pull_request.number }}
+    body: |
+      Revision ${{ env.CONTAINERAPP_NAME }}--${{ env.SHORT_HASH }} is created.
+      ${{ steps.aca_new_revision.outputs.app-url }}
 ```
 
-#### Create and Deactivate an action
+#### Sample Snipet for the Review Revision Deactivation
+
+This action can also automatically deactivate revisions.
+However, this flow must be triggered only when the pull request is closed. For more information, see the [sample](./example/) implementation.
 
 ```yaml
-on: [push, pull_request]
-name: Preview Deployment
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    env:
-      RESOURCE_GROUP: <YOUR_RESOURCE_GROUP_NAME>
-      CONTAINER_APP_NAME: <YOUR_CONTAINER_APP_NAME>
-      DOCKER_IMAGE_NAME: <YOUR_DOCKER_IMAGE_NAME>
-    steps:
-    - name: 'Checkout GitHub Action'
-      uses: actions/checkout@master
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    # Revision Creation
-    - name: 'Create a new Container App revision'
-      uses: azure/aca-preview@v0.1
-      with:
-        resource-group: ${{ env.RESOURCE_GROUP }}
-        name: ${{ env.CONTAINER_APP_NAME }}
-        image: ${{ env.DOCKER_IMAGE_NAME }}
-    # Revision Deactivation
-    - name: Deactivate Preview Deployment
-        if: github.event.action == 'closed'
-        uses: azure/aca-preview@v0.0.1
-        with:
-          deactivate-revision-mode: ture
-          resource-group: ${{ env.RESOURCE_GROUP }}
-          name: ${{ env.CONTAINER_APP_NAME }}
-          image: ${{ env.DOCKER_IMAGE_NAME }}
+- name: Deactivate Preview revision on ACA
+  uses: Azure/aca-review-apps@v0.2.0
+  with:
+    resource-group: <YOUR_RESOURCE_GROUP>
+    name: <YOUR_CONTAINER_APP_NAME>
+    revision-name-suffix: <SHORT_HASH>
+    image: <YOUR_CONTAINER_IMAGE>
+    deactivate-revision-mode: true #IMPORTANT!!
+
+- name: Find Comment
+  uses: peter-evans/find-comment@v2
+  id: fc
+  with:
+    issue-number: ${{ github.event.pull_request.number }}
+    comment-author: "github-actions[bot]"
+    body-includes: Revision ${{ env.CONTAINERAPP_NAME }}--${{ env.SHORT_HASH }} is created.
+
+- name: add new comment to PR
+  if: steps.fc.outputs.comment-id != ''
+  uses: peter-evans/create-or-update-comment@v2
+  with:
+    comment-id: ${{ steps.fc.outputs.comment-id }}
+    edit-mode: replace
+    body: |
+      Revision ${{ env.CONTAINERAPP_NAME }}--${{ env.SHORT_HASH }} is deactivated.
 ```
 
-### How to develop/test this Action
+### How to Develop/Test this Action
 
 #### Debug with breakpoints on Visual Studio Code
 
