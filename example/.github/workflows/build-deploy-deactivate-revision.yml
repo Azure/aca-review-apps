@@ -1,0 +1,121 @@
+name: Build, Deploy and Deactivate ACA revision
+
+on:
+  pull_request:
+    types: [opened, synchronize, closed]
+
+permissions:
+  # for `create-or-update-comment` action
+  pull-requests: write
+  issues: write
+
+  # for Azure login with OIDC
+  # id-token: write
+
+env:
+  CONTAINER_REGISTRY: acracapreview.azurecr.io # TODO: container registry name like `foobar.azurecr.io`
+  RESOURCE_GROUP_NAME: aca-preview-hands-on-rg # TODO: resource group name where the target Azure Container Apps resource in
+  CONTAINERAPP_NAME: aca-preview-app # TODO: Azure Container Apps resource name
+
+jobs:
+  add-revision:
+    runs-on: ubuntu-18.04
+    if: github.event.action != 'closed'
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Set repository name to env
+        run: |
+          echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_ENV
+          echo "SHORT_HASH=${COMMIT_HASH:0:7}" >> $GITHUB_ENV
+        env:
+          COMMIT_HASH: ${{ github.event.pull_request.head.sha }}
+
+      - name: Log in to container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.CONTAINER_REGISTRY }}
+          username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.event.pull_request.head.sha }}
+          file: ./Dockerfile
+          context: ./
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Add revision to ACA
+        uses: Azure/aca-review-apps@v0.2.0
+        id: aca_new_revision
+        with:
+          resource-group: ${{ env.RESOURCE_GROUP_NAME }}
+          name: ${{ env.CONTAINERAPP_NAME }}
+          revision-name-suffix: ${{ env.SHORT_HASH }}
+          image: ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.event.pull_request.head.sha }}
+
+      - name: add new comment to PR
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Revision ${{ env.CONTAINERAPP_NAME }}--${{ env.SHORT_HASH }} is created.
+            ${{ steps.aca_new_revision.outputs.app-url }}
+
+  deactivate-revision:
+    runs-on: ubuntu-18.04
+    if: github.event.action != 'opened'
+
+    steps:
+      - name: Set short version of Commit hash  to env
+        run: |
+          echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_ENV
+          echo "SHORT_HASH=${COMMIT_HASH:0:7}" >> $GITHUB_ENV
+        env:
+          COMMIT_HASH: |
+            ${{
+              github.event.action == 'closed' && github.event.pull_request.head.sha ||
+              github.event.action == 'synchronize' && github.event.before
+            }}
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deactivate Preview revision on ACA
+        uses: Azure/aca-review-apps@v0.2.0
+        with:
+          resource-group: ${{ env.RESOURCE_GROUP_NAME }}
+          name: ${{ env.CONTAINERAPP_NAME }}
+          revision-name-suffix: ${{ env.SHORT_HASH }}
+          deactivate-revision-mode: true
+          image: "THIS_VALUE_IS_IGNORED_IN_DEACTIVATION_MODE"
+
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: Revision ${{ env.CONTAINERAPP_NAME }}--${{ env.SHORT_HASH }} is created.
+
+      - name: add new comment to PR
+        if: steps.fc.outputs.comment-id != ''
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            Revision ${{ env.CONTAINERAPP_NAME }}--${{ env.SHORT_HASH }} is deactivated.

@@ -20,7 +20,7 @@ outputs:
     app-url:
         description: 'Deployed App URL'
 branding:
-    icon: 'azure-logo.svg'
+    icon: 'check-circle'
     color: 'blue'
 runs:
     using: 'node16'
