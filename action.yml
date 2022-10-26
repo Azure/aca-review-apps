@@ -1,4 +1,4 @@
-name: 'Create Azure Container App Revision for Review'
+name: 'Create Azure Container App Review Revisions'
 description: 'GitHub Action to create a new Container App revision for PR review. github.com/Azure/Actions'
 inputs:
     resource-group:
