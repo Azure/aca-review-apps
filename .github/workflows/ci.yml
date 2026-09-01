@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 16 = current action.yml runtime (`using: node16`) and package.json `engines`
+        # 20 = the realistic next runtime target
+        # 24 = forward compat (SlowBuffer removed from Node core); informational only
+        node: ["16", "20", "24"]
+    # Node 24 currently fails on `main` because of a transitive `buffer-equal-constant-time`
+    # / `SlowBuffer` incompatibility that the jws/jwa bump in PR #91 fixes. Keep it
+    # non-blocking so it surfaces the issue without gating merges.
+    continue-on-error: ${{ matrix.node == '24' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Set up Node.js ${{ matrix.node }}
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (tsc)
+        run: npm run build
+
+      - name: Smoke test built action
+        # The compiled entrypoint runs main() on import. Without Azure credentials or
+        # action inputs it must fail *gracefully* via core.setFailed, not crash while
+        # loading modules (which is how a breaking dependency bump shows up).
+        run: |
+          set -o pipefail
+          out=$(node -e "require('./lib/main.js')" 2>&1) || true
+          echo "$out"
+          if echo "$out" | grep -qE "Deployment Failed with Error|Input required and not supplied"; then
+            echo "OK: action loaded and failed gracefully"
+          else
+            echo "::error::built action did not load cleanly (possible breaking dependency change)"
+            exit 1
+          fi
+
+  quality:
+    name: quality (non-blocking)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prettier check
+        continue-on-error: true
+        run: npx --yes prettier@3.3.3 --check "src/**/*.ts" ".github/workflows/*.yml"
+
+      - name: npm audit (high and above)
+        continue-on-error: true
+        run: npm audit --audit-level=high
