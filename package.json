@@ -46,9 +46,9 @@
   },
   "homepage": "https://github.com/Azure/aca-review-apps#readme",
   "dependencies": {
-    "@actions/core": "^1.9.1",
+    "@actions/core": "^1.11.1",
     "@azure/arm-appcontainers": "^1.1.0",
-    "@azure/identity": "^2.1.0",
+    "@azure/identity": "^4.13.2",
     "azure-actions-webclient": "^1.0.10"
   },
   "devDependencies": {
